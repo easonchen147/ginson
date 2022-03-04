@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 	"fmt"
-	"ginson/app/models"
+	"ginson/app/model"
 	"time"
 )
 
@@ -17,6 +17,6 @@ func GetUserCache() *UserCache {
 	return userCache
 }
 
-func (c *UserCache) AddUserCache(ctx context.Context, user *models.User) error {
-	return c.client().Set(ctx, fmt.Sprintf("userId:%d", user.Id), user, time.Hour).Err()
+func (c *UserCache) AddUserCache(ctx context.Context, user *model.User) error {
+	return c.redis().Set(ctx, fmt.Sprintf("userId:%d", user.Id), user, time.Hour).Err()
 }

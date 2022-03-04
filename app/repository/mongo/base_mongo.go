@@ -4,7 +4,7 @@ import (
 	"ginson/platform/database"
 )
 
-type BaseMongo struct {}
+type BaseMongo struct{}
 
 var baseMongo = &BaseMongo{}
 

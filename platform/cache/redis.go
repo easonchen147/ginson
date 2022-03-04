@@ -26,7 +26,7 @@ func InitRedis(cfg *conf.AppConfig) error {
 	return nil
 }
 
-func Client() *redis.Client {
+func Redis() *redis.Client {
 	if client == nil {
 		panic(errors.New("redis is not ready"))
 	}
@@ -47,7 +47,7 @@ func InitRedisCluster(cfg *conf.AppConfig) error {
 	return nil
 }
 
-func ClusterClient() *redis.ClusterClient {
+func RedisCluster() *redis.ClusterClient {
 	if clusterClient == nil {
 		panic(errors.New("redis cluster is not ready"))
 	}

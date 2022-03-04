@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"ginson/app/services"
+	"ginson/app/service"
 	"ginson/pkg/log"
 	"net/http"
 	"strings"
@@ -11,7 +11,7 @@ import (
 )
 
 // AuthMiddleware 用户鉴权
-func AuthMiddleware(user *services.UserService) gin.HandlerFunc {
+func AuthMiddleware(user *service.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.GetHeader("Authorization")
 		if token == "" {

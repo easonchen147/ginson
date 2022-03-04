@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type BaseQuery struct {}
+type BaseQuery struct{}
 
 var baseQuery = &BaseQuery{}
 

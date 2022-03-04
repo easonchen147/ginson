@@ -1,14 +1,18 @@
 package router
 
 import (
-	"ginson/app/controllers"
+	"ginson/app/controller"
 	"github.com/gin-gonic/gin"
 )
 
+type ControllerRoutes interface {
+	BindRoutes(group *gin.RouterGroup)
+}
+
 func RegisterRoutes(server *gin.Engine) {
-	server.GET("/", controllers.BaseController.Index)
+	server.GET("/", controller.BaseController.Index)
 	r := server.Group("/api")
 	{
-		controllers.GetUserController().BindRoutes(r.Group("/user"))
+		userRouter.BindRoutes(r.Group("/user"))
 	}
 }

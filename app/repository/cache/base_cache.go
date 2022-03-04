@@ -5,10 +5,10 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-type BaseCache struct {}
+type BaseCache struct{}
 
 var baseCache = &BaseCache{}
 
-func (b *BaseCache) client() *redis.Client {
-	return cache.Client()
+func (b *BaseCache) redis() *redis.Client {
+	return cache.Redis()
 }

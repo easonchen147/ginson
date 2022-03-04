@@ -3,7 +3,7 @@ package mongo
 import (
 	"context"
 	"fmt"
-	"ginson/app/models"
+	"ginson/app/model"
 	"ginson/pkg/log"
 )
 
@@ -17,7 +17,7 @@ func GetUserMongo() *UserMongo {
 	return userMongo
 }
 
-func (m *UserMongo) AddUserCache(ctx context.Context, user *models.User) error {
+func (m *UserMongo) AddUserCache(ctx context.Context, user *model.User) error {
 	result, err := m.mg().Db.Collection("user").InsertOne(ctx, user)
 	if err != nil {
 		return err
