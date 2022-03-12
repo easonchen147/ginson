@@ -8,6 +8,7 @@ import (
 )
 
 type WechatOauthHandler struct {
+	*BaseOauthHandler
 	BaseOauthConfig
 	redirectUrl string
 }
@@ -34,9 +35,10 @@ type WechatOauthUserInfo struct {
 	Privilege  []string `json:"privilege"`
 }
 
-// NewWechatOauthHandler 微信登录授权工具
+// NewWechatOauthHandler 微信授权工具
 func NewWechatOauthHandler(appId, appSecret, redirectUrl string) *WechatOauthHandler {
 	return &WechatOauthHandler{
+		BaseOauthHandler: baseOauthHandler,
 		BaseOauthConfig: BaseOauthConfig{
 			appId:     appId,
 			appSecret: appSecret,
@@ -45,22 +47,22 @@ func NewWechatOauthHandler(appId, appSecret, redirectUrl string) *WechatOauthHan
 	}
 }
 
-// GetRedirectUrl 获取微信登录重定向地址，state可以使用唯一凭证
+// GetRedirectUrl 获取微信授权重定向地址，state可以使用唯一凭证
 func (w *WechatOauthHandler) GetRedirectUrl(state string) (string, error) {
 	url := utils.NewUrlHelper(wechatOauthAuthorizeUrl).
-		AddParam("response_type", "code").
+		AddParam("response_type", responseTypeCode).
 		AddParam("appid", w.appId).
 		AddParam("redirect_uri", w.redirectUrl).
 		AddParam("scope", wechatOauthScopeLogin).
-		AddParam("state", state).
+		AddParam("state", w.getState(state)).
 		Build()
 	return url, nil
 }
 
-// GetAccessToken code换取小程序授权的accessToken
+// GetAccessToken code换取微信授权的accessToken
 func (w *WechatOauthHandler) GetAccessToken(code string) (*WechatOauthToken, error) {
 	url := utils.NewUrlHelper(wechatOauthAccessTokenUrl).
-		AddParam("grant_type", "authorization_code").
+		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("code", code).
 		AddParam("appid", w.appId).
 		AddParam("secret", w.appSecret).
@@ -86,7 +88,7 @@ func (w *WechatOauthHandler) GetAccessToken(code string) (*WechatOauthToken, err
 // RefreshToken 刷新accessToken有效期
 func (w *WechatOauthHandler) RefreshToken(refreshToken string) (*WechatOauthToken, error) {
 	url := utils.NewUrlHelper(wechatOauthRefreshTokenUrl).
-		AddParam("grant_type", "refresh_token").
+		AddParam("grant_type", grantTypeRefreshToken).
 		AddParam("refresh_token", refreshToken).
 		AddParam("appid", w.appId).
 		Build()
@@ -132,7 +134,7 @@ func (w *WechatOauthHandler) CheckToken(accessToken, openId string) error {
 	return nil
 }
 
-// GetUserInfo 获取授权用户的信息
+// GetUserInfo 获取微信授权用户的信息
 func (w *WechatOauthHandler) GetUserInfo(openId, accessToken string) (*WechatOauthUserInfo, error) {
 	url := utils.NewUrlHelper(wechatOauthUserInfoUrl).
 		AddParam("openid", openId).
