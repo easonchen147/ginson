@@ -1,0 +1,60 @@
+env = "dev"
+http_addr = "127.0.0.1"
+http_port = 8080
+log_mode = "console"
+log_file = "logs/app.log"
+log_level = "debug"
+
+[dbs]
+
+[dbs.default]
+uri = "root:test@tcp(10.11.178.138:3306)/gva?charset=utf8mb4&parseTime=True&loc=Local"
+max_idle_conn = 5
+max_open_conn = 50
+
+[dbs.user]
+uri = "root:test@tcp(10.11.178.138:3306)/gva?charset=utf8mb4&parseTime=True&loc=Local"
+max_idle_conn = 5
+max_open_conn = 50
+
+[mongo]
+uri = "mongodb://user:password@localhost:27017/test"
+db = "test"
+connect_timeout = 5
+max_open_conn = 64
+max_pool_size = 64
+min_pool_size = 12
+
+[redis]
+addr = "10.11.178.138:6379"
+pass = "test"
+db = 1
+min_idle = 10
+pool_size = 64
+
+[redis_cluster]
+addrs = ["10.11.178.138:7000", "10.11.178.138:7001", "10.11.178.138:7002", "10.11.178.138:7003", "10.11.178.138:7004", "10.11.178.138:7005"]
+pass = "test"
+min_idle = 10
+pool_size = 64
+
+[kafka]
+
+[consumers]
+
+[consumers.user]
+broker = "10.11.178.138:9092"
+topic = "user"
+group = "test"
+partition = 0
+
+[producers]
+
+[producers.user]
+broker = "10.11.178.138:9092"
+topic = "user"
+
+# 业务配置在这里
+[ext]
+token_secret = "@fc695ewewqewqwqdaaaaa"
+

@@ -13,6 +13,9 @@ var (
 )
 
 func InitProducer(cfg *conf.AppConfig) error {
+	if cfg.KafkaConfig == nil {
+		return nil
+	}
 	producers = make(map[string]*kafka.Writer)
 	for name, kafkaCfg := range cfg.KafkaConfig.Producers {
 		producers[name] = &kafka.Writer{
@@ -25,6 +28,9 @@ func InitProducer(cfg *conf.AppConfig) error {
 }
 
 func InitConsumer(cfg *conf.AppConfig) error {
+	if cfg.KafkaConfig == nil {
+		return nil
+	}
 	for name, kafkaCfg := range cfg.KafkaConfig.Consumers {
 		consumers[name] = kafka.NewReader(kafka.ReaderConfig{
 			Brokers:   []string{kafkaCfg.Broker},

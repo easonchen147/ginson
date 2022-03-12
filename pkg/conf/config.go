@@ -73,7 +73,9 @@ type kafkaProducerConfig struct {
 }
 
 type extConfig struct {
-	TokenSecret string `toml:"token_secret"`
+	TokenSecret     string `toml:"token_secret"`
+	WxMiniAppId     string `toml:"wx_mini_app_id"`
+	WxMiniAppSecret string `toml:"wx_mini_app_secret"`
 }
 
 type mongoConfig struct {
@@ -89,7 +91,7 @@ func InitConfig(file string) *AppConfig {
 	AppConf = &AppConfig{
 		File:     file,
 		Env:      Dev,
-		HttpAddr: "127.0.0.1",
+		HttpAddr: "0.0.0.0",
 		HttpPort: 8080,
 	}
 	return AppConf

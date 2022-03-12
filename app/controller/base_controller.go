@@ -18,7 +18,7 @@ type commonResp struct {
 var BaseController = &Controller{}
 
 func (*Controller) Index(ctx *gin.Context) {
-	ctx.String(http.StatusOK, "Gen Web")
+	ctx.String(http.StatusOK, "Welcome to ginson")
 }
 
 func (*Controller) Success(ctx *gin.Context, data interface{}) {

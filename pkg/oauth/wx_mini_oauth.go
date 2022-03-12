@@ -67,8 +67,8 @@ func NewWxMiniOauthHandler(appId, appSecret string) *WxMiniOauthHandler {
 	}
 }
 
-// GetSessionKey 小程序触发wx.login()获取code，再获取微信小程序授权凭证
-func (w *WxMiniOauthHandler) GetSessionKey(code string) (*WxMiniSessionKey, error) {
+// CodeToSessionKey 小程序触发wx.login()获取code，再获取微信小程序授权凭证
+func (w *WxMiniOauthHandler) CodeToSessionKey(code string) (*WxMiniSessionKey, error) {
 	url := utils.NewUrlHelper(wxMiniOauthCode2TokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("appid", w.appId).

@@ -35,3 +35,29 @@ func AuthMiddleware(user *service.UserService) gin.HandlerFunc {
 		}
 	}
 }
+
+// TokenMiddleware Token校验
+func TokenMiddleware(tokenService *service.TokenService) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		token := ctx.GetHeader("Authorization")
+		if token == "" {
+			ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
+				"code": 405,
+				"msg":  "未登录",
+			})
+			return
+		}
+		openId, err := tokenService.ParseToken(ctx, strings.TrimSpace(strings.Trim(token, "Bearer")))
+		if err == nil && openId != "" {
+			log.Info(fmt.Sprintf("parse token success, openId: %d", openId))
+			ctx.Set("openId", openId)
+			ctx.Next()
+		} else {
+			log.Error(fmt.Sprintf("parse token failed, error: %s", err))
+			ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
+				"code": 405,
+				"msg":  "用户Token无效",
+			})
+		}
+	}
+}
