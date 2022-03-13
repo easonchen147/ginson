@@ -24,4 +24,4 @@ ENV CONFIG_FILE="/data/ginson/conf/app.toml"
 
 EXPOSE 8080
 
-CMD ['/data/ginson/ginson']
+ENTRYPOINT [ './ginson' ]
