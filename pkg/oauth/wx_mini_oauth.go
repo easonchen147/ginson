@@ -76,7 +76,7 @@ func (w *WxMiniOauthHandler) CodeToSessionKey(code string) (*WxMiniSessionKey, e
 		AddParam("js_code", code).
 		Build()
 
-	resp, err := resty.New().R().Post(url)
+	resp, err := resty.New().R().Get(url)
 	if err != nil {
 		return nil, err
 	}
