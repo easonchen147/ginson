@@ -14,7 +14,7 @@ docker-run:
 	@docker run --name=ginson -d -p 8080:8080 ginson:${VERSION}
 
 help:
-	@echo "make build 编译二进制"
-	@echo "make run 运行二进制"
-	@echo "make docker 打包镜像"
-	@echo "make docker 运行镜像"
+	@echo "make build 编译程序"
+	@echo "make run 运行程序"
+	@echo "make docker-build 先执行编译程序，打包镜像"
+	@echo "make docker-run 运行容器"

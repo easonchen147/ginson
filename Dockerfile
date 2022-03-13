@@ -1,27 +1,13 @@
-FROM golang:alpine
+FROM centos:centos7
 
-ARG BINARY="ginson"
+WORKDIR /app
+COPY ${BINARY} .
 
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64 \
-    GOPROXY="https://goproxy.cn,direct"
+WORKDIR /app/conf
+COPY app.toml .
 
-WORKDIR /data/ginson/src
-
-COPY . .
-
-RUN go build -v -o ${BINARY}
-
-WORKDIR /data/ginson/conf
-RUN cp /data/ginson/src/app.toml .
-
-WORKDIR /data/ginson
-RUN cp /data/ginson/src/${BINARY} .
-
-ENV CONFIG_FILE="/data/ginson/conf/app.toml"
+ENV CONFIG_FILE="/app/conf/app.toml"
 
 EXPOSE 8080
 
-ENTRYPOINT [ './ginson' ]
+ENTRYPOINT [ "/app/ginson" ]
