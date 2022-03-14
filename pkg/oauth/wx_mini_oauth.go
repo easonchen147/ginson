@@ -137,3 +137,28 @@ func (w *WxMiniOauthHandler) GetUserPhone(code, accessToken string) (*WxMiniOaut
 
 	return result, nil
 }
+
+// GetAccessToken 获取微信小程序后台调用accessToken
+func (w *WxMiniOauthHandler) GetAccessToken() (*WxMiniOauthToken, error) {
+	url := utils.NewUrlHelper(wxMiniOauthAccessTokenUrl).
+		AddParam("grant_type", grantTypeClientCredential).
+		AddParam("appid", w.appId).
+		AddParam("secret", w.appSecret).
+		Build()
+
+	resp, err := resty.New().R().Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &WxMiniOauthToken{}
+	err = json.Unmarshal(resp.Body(), &result)
+	if err != nil {
+		return nil, err
+	}
+	if result.Errcode != 0 {
+		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
+	}
+
+	return result, nil
+}

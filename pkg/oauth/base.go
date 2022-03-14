@@ -6,6 +6,7 @@ const (
 	// 授权类型
 	grantTypeAuthorizationCode = "authorization_code"
 	grantTypeRefreshToken      = "refresh_token"
+	grantTypeClientCredential  = "client_credential"
 
 	// 响应类型
 	responseTypeCode = "code"
@@ -31,8 +32,9 @@ const (
 
 // 小程序登录授权
 const (
-	wxMiniOauthCode2TokenUrl = "https://api.weixin.qq.com/sns/jscode2session"
-	wxMiniOauthGetPhoneUrl   = "https://api.weixin.qq.com/wxa/business/getuserphonenumber"
+	wxMiniOauthAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token"
+	wxMiniOauthCode2TokenUrl  = "https://api.weixin.qq.com/sns/jscode2session"
+	wxMiniOauthGetPhoneUrl    = "https://api.weixin.qq.com/wxa/business/getuserphonenumber"
 )
 
 // qq授权
