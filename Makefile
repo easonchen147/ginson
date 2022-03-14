@@ -11,7 +11,7 @@ docker-build:
 	@docker build -t ${BINARY}:${VERSION} .
 
 docker-run:
-	@docker run --name=ginson -d -p 8080:8080 ginson:${VERSION}
+	@docker run --name=${BINARY}-${VERSION} -d -p 8080:8080 ${BINARY}:${VERSION}
 
 help:
 	@echo "make build 编译程序"

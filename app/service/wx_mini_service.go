@@ -42,7 +42,16 @@ func (w *WxMiniService) WxMiniLogin(ctx context.Context, req *model.WxMiniLoginR
 		return nil, code.BizError(err)
 	}
 
-	return &model.WxMiniLoginResp{Token: token}, nil
+	result := &model.WxMiniLoginResp{Token: token}
+	if req.EncryptedData != "" && req.Iv != "" {
+		userInfo, err := w.wxMiniOauthHandler.GetUserInfo(sessionInfo.SessionKey, req.EncryptedData, req.Iv)
+		if err != nil {
+			log.Error(fmt.Sprintf("code to session key failed, error: %v", err))
+			return nil, code.BizError(err)
+		}
+		result.UserInfo = w.populateUserInfoResp(userInfo)
+	}
+	return result, nil
 }
 
 func (w *WxMiniService) WxMiniGetUserInfo(ctx context.Context, req *model.WxMiniGetUserInfoReq) (*model.WxMiniGetUserInfoResp, code.BizErr) {
@@ -60,7 +69,11 @@ func (w *WxMiniService) WxMiniGetUserInfo(ctx context.Context, req *model.WxMini
 		return nil, code.BizError(err)
 	}
 
-	result := &model.WxMiniGetUserInfoResp{Nickname: userInfo.Nickname, AvatarUrl: userInfo.AvatarUrl}
+	result := w.populateUserInfoResp(userInfo)
 	userInfoCacheMap[openId] = result
 	return result, nil
+}
+
+func (w *WxMiniService) populateUserInfoResp(userInfo *oauth.WxMiniOauthUserInfo) *model.WxMiniGetUserInfoResp {
+	return &model.WxMiniGetUserInfoResp{Nickname: userInfo.Nickname, AvatarUrl: userInfo.AvatarUrl}
 }
