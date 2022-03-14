@@ -1,7 +1,7 @@
 FROM centos:centos7
 
 WORKDIR /app
-COPY ${BINARY} .
+COPY ginson .
 
 WORKDIR /app/conf
 COPY app.toml .
