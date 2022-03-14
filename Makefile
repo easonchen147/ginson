@@ -2,7 +2,7 @@ BINARY="ginson"
 VERSION=1.0
 
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on GOPROXY="https://goproxy.cn,direct" go build -v -o ${BINARY}
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on GOPROXY="https://goproxy.cn,direct" GOFLAGS="-mod=mod" go build -v -o ${BINARY}
 
 run:
 	@nohup ./${BINARY} > std.out 2>&1 &
