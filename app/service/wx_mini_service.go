@@ -4,25 +4,23 @@ import (
 	"context"
 	"errors"
 	"ginson/app/model"
+	"ginson/app/repository/cache"
 	"ginson/pkg/code"
 	"ginson/pkg/conf"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
 	"ginson/pkg/oauth"
+	"ginson/pkg/utils"
 )
-
-// 测试内存暂存
-var openIdCacheMap = map[string]string{}
-
-var userInfoCacheMap = map[string]*model.WxMiniGetUserInfoResp{}
 
 var wxMiniOauthHandler = oauth.NewWxMiniOauthHandler(conf.AppConf.Ext.WxMiniAppId, conf.AppConf.Ext.WxMiniAppSecret)
 
 type WxMiniService struct {
 	wxMiniOauthHandler *oauth.WxMiniOauthHandler
+	wxMiniCache        *cache.WxMiniCache
 }
 
-var wxMiniService = &WxMiniService{wxMiniOauthHandler: wxMiniOauthHandler}
+var wxMiniService = &WxMiniService{wxMiniOauthHandler: wxMiniOauthHandler, wxMiniCache: cache.GetWxMiniCache()}
 
 func GetWxMiniService() *WxMiniService {
 	return wxMiniService
@@ -35,7 +33,6 @@ func (w *WxMiniService) WxMiniLogin(ctx context.Context, req *model.WxMiniLoginR
 		return nil, code.BizError(err)
 	}
 
-	openIdCacheMap[sessionInfo.Openid] = sessionInfo.SessionKey
 	token, err := tokenService.createToken(ctx, sessionInfo.Openid, constant.OauthSourceWxMini)
 	if err != nil {
 		return nil, code.BizError(err)
@@ -50,6 +47,11 @@ func (w *WxMiniService) WxMiniLogin(ctx context.Context, req *model.WxMiniLoginR
 		}
 		result.UserInfo = w.populateUserInfoResp(userInfo)
 	}
+
+	_ = utils.GoInPool(func() {
+		_ = w.wxMiniCache.AddSessionKey(ctx, sessionInfo.Openid, sessionInfo.SessionKey)
+	})
+
 	return result, nil
 }
 
@@ -58,10 +60,12 @@ func (w *WxMiniService) WxMiniGetUserInfo(ctx context.Context, req *model.WxMini
 	if !ok {
 		return nil, code.BizError(errors.New("get open id failed"))
 	}
-	sessionKey, ok := openIdCacheMap[openId]
-	if !ok {
-		return nil, code.BizError(errors.New("get session key failed"))
+
+	sessionKey, err := w.wxMiniCache.GetSessionKey(ctx, openId)
+	if err != nil || sessionKey == "" {
+		return nil, code.BizError(errors.New("sessionKey is invalid"))
 	}
+
 	userInfo, err := w.wxMiniOauthHandler.GetUserInfo(sessionKey, req.EncryptedData, req.Iv)
 	if err != nil {
 		log.Error("code to session key failed, error: %v", err)
@@ -69,7 +73,11 @@ func (w *WxMiniService) WxMiniGetUserInfo(ctx context.Context, req *model.WxMini
 	}
 
 	result := w.populateUserInfoResp(userInfo)
-	userInfoCacheMap[openId] = result
+
+	_ = utils.GoInPool(func() {
+		_ = w.wxMiniCache.AddUserInfo(ctx, openId, result)
+	})
+
 	return result, nil
 }
 
