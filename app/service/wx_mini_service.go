@@ -30,7 +30,7 @@ func GetWxMiniService() *WxMiniService {
 }
 
 func (w *WxMiniService) WxMiniLogin(ctx context.Context, req *model.WxMiniLoginReq) (*model.WxMiniLoginResp, code.BizErr) {
-	sessionInfo, err := w.wxMiniOauthHandler.CodeToSessionKey(req.Code)
+	sessionInfo, err := w.wxMiniOauthHandler.CodeToSessionKey(ctx, req.Code)
 	if err != nil {
 		log.Error(fmt.Sprintf("code to session key failed, error: %v", err))
 		return nil, code.BizError(err)
