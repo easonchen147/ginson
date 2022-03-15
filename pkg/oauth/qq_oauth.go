@@ -1,10 +1,9 @@
 package oauth
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 	"ginson/pkg/utils"
-	"github.com/go-resty/resty/v2"
 )
 
 type QQOauthHandler struct {
@@ -70,7 +69,22 @@ func (q *QQOauthHandler) GetRedirectUrl(state string, forMobile bool) (string, e
 }
 
 // GetAccessToken code换取QQ授权的accessToken
-func (q *QQOauthHandler) GetAccessToken(code string) (*QQOauthToken, error) {
+func (q *QQOauthHandler) GetAccessToken(ctx context.Context, code string) (*QQOauthToken, error) {
+	url := q.buildAccessTokenUrl(code)
+	result := &QQOauthToken{}
+	err := utils.Get(ctx, url, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Error != 0 {
+		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Error, result.ErrorDescription)
+	}
+
+	return result, nil
+}
+
+func (q *QQOauthHandler) buildAccessTokenUrl(code string) string {
 	url := utils.NewUrlHelper(qqOauthAccessTokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("code", code).
@@ -79,96 +93,54 @@ func (q *QQOauthHandler) GetAccessToken(code string) (*QQOauthToken, error) {
 		AddParam("redirect_uri", q.redirectUrl).
 		AddParam("fmt", "json").
 		Build()
-
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	result := &QQOauthToken{}
-	err = json.Unmarshal(resp.Body(), &result)
-	if err != nil {
-		return nil, err
-	}
-	if result.Error != 0 {
-		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Error, result.ErrorDescription)
-	}
-
-	return result, nil
-}
-
-// RefreshToken 刷新accessToken有效期
-func (q *QQOauthHandler) RefreshToken(refreshToken string) (*QQOauthRefreshToken, error) {
-	url := utils.NewUrlHelper(qqOauthAccessTokenUrl).
-		AddParam("grant_type", grantTypeRefreshToken).
-		AddParam("client_id", q.appId).
-		AddParam("client_secret", q.appSecret).
-		AddParam("refresh_token", q.redirectUrl).
-		AddParam("fmt", "json").
-		Build()
-
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	result := &QQOauthRefreshToken{}
-	err = json.Unmarshal(resp.Body(), &result)
-	if err != nil {
-		return nil, err
-	}
-	if result.Error != 0 {
-		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Error, result.ErrorDescription)
-	}
-
-	return result, nil
+	return url
 }
 
 // GetOpenid 获取QQ授权用户的Openid
-func (q *QQOauthHandler) GetOpenid(accessToken string) (*QQOauthMe, error) {
+func (q *QQOauthHandler) GetOpenid(ctx context.Context, accessToken string) (*QQOauthMe, error) {
+	url := q.buildOpenidUrl(accessToken)
+	result := &QQOauthMe{}
+	err := utils.Get(ctx, url, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Error != 0 {
+		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Error, result.ErrorDescription)
+	}
+
+	return result, nil
+}
+
+func (q *QQOauthHandler) buildOpenidUrl(accessToken string) string {
 	url := utils.NewUrlHelper(qqOauthMeUrl).
 		AddParam("access_token", accessToken).
 		AddParam("fmt", "json").
 		Build()
-
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	result := &QQOauthMe{}
-	err = json.Unmarshal(resp.Body(), &result)
-	if err != nil {
-		return nil, err
-	}
-	if result.Error != 0 {
-		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Error, result.ErrorDescription)
-	}
-
-	return result, nil
+	return url
 }
 
 // GetUserInfo 获取QQ授权用户的信息
-func (q *QQOauthHandler) GetUserInfo(openid, accessToken string) (*QQOauthUserInfo, error) {
-	url := utils.NewUrlHelper(qqOauthUserInfoUrl).
-		AddParam("access_token", accessToken).
-		AddParam("oauth_consumer_key", q.appId).
-		AddParam("openid", openid).
-		Build()
-
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
+func (q *QQOauthHandler) GetUserInfo(ctx context.Context, openid, accessToken string) (*QQOauthUserInfo, error) {
+	url := q.buildUserInfoUrl(openid, accessToken)
 	result := &QQOauthUserInfo{}
-	err = json.Unmarshal(resp.Body(), &result)
+	err := utils.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
+
 	if result.Ret != 0 {
 		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Ret, result.Msg)
 	}
 
 	return result, nil
+}
+
+func (q *QQOauthHandler) buildUserInfoUrl(openid string, accessToken string) string {
+	url := utils.NewUrlHelper(qqOauthUserInfoUrl).
+		AddParam("access_token", accessToken).
+		AddParam("oauth_consumer_key", q.appId).
+		AddParam("openid", openid).
+		Build()
+	return url
 }

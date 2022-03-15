@@ -1,11 +1,11 @@
 package oauth
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"ginson/pkg/utils"
-	"github.com/go-resty/resty/v2"
 	"github.com/xlstudio/wxbizdatacrypt"
 )
 
@@ -44,6 +44,10 @@ type WxMiniOauthWaterMark struct {
 	Appid     string `json:"appid"`
 }
 
+type WxMiniOauthGetPhoneInfoReq struct {
+	Code string `json:"code"`
+}
+
 type WxMiniOauthPhoneInfo struct {
 	PhoneNumber     string                `json:"phoneNumber"`
 	PurePhoneNumber string                `json:"purePhoneNumber"`
@@ -68,29 +72,29 @@ func NewWxMiniOauthHandler(appId, appSecret string) *WxMiniOauthHandler {
 }
 
 // CodeToSessionKey 小程序触发wx.login()获取code，再获取微信小程序授权凭证
-func (w *WxMiniOauthHandler) CodeToSessionKey(code string) (*WxMiniSessionKey, error) {
+func (w *WxMiniOauthHandler) CodeToSessionKey(ctx context.Context, code string) (*WxMiniSessionKey, error) {
+	url := w.buildCodeToSessionKeyUrl(code)
+	result := &WxMiniSessionKey{}
+	err := utils.Get(ctx, url, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Errcode != 0 {
+		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
+	}
+
+	return result, nil
+}
+
+func (w *WxMiniOauthHandler) buildCodeToSessionKeyUrl(code string) string {
 	url := utils.NewUrlHelper(wxMiniOauthCode2TokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("appid", w.appId).
 		AddParam("secret", w.appSecret).
 		AddParam("js_code", code).
 		Build()
-
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	result := &WxMiniSessionKey{}
-	err = json.Unmarshal(resp.Body(), &result)
-	if err != nil {
-		return nil, err
-	}
-	if result.Errcode != 0 {
-		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
-	}
-
-	return result, nil
+	return url
 }
 
 // GetUserInfo 小程序wx.getUserProfile()获取加密信息，解密加密串，获取微信小程序授权用户的信息
@@ -115,22 +119,15 @@ func (w *WxMiniOauthHandler) GetUserInfo(sessionKey, encryptedData, iv string) (
 }
 
 // GetUserPhone 获取微信小程序授权用户的手机
-func (w *WxMiniOauthHandler) GetUserPhone(code, accessToken string) (*WxMiniOauthUserPhone, error) {
-	url := utils.NewUrlHelper(wxMiniOauthGetPhoneUrl).
-		AddParam("access_token", accessToken).
-		Build()
-
-	req := map[string]string{"code": code}
-	resp, err := resty.New().R().SetBody(req).Post(url)
-	if err != nil {
-		return nil, err
-	}
-
+func (w *WxMiniOauthHandler) GetUserPhone(ctx context.Context, code, accessToken string) (*WxMiniOauthUserPhone, error) {
+	url := w.buildUserPhoneUrl(accessToken)
+	req := &WxMiniOauthGetPhoneInfoReq{Code: code}
 	result := &WxMiniOauthUserPhone{}
-	err = json.Unmarshal(resp.Body(), &result)
+	err := utils.Post(ctx, url, req, &result)
 	if err != nil {
 		return nil, err
 	}
+
 	if result.Errcode != 0 {
 		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
 	}
@@ -138,27 +135,34 @@ func (w *WxMiniOauthHandler) GetUserPhone(code, accessToken string) (*WxMiniOaut
 	return result, nil
 }
 
-// GetAccessToken 获取微信小程序后台调用accessToken
-func (w *WxMiniOauthHandler) GetAccessToken() (*WxMiniOauthToken, error) {
-	url := utils.NewUrlHelper(wxMiniOauthAccessTokenUrl).
-		AddParam("grant_type", grantTypeClientCredential).
-		AddParam("appid", w.appId).
-		AddParam("secret", w.appSecret).
+func (w *WxMiniOauthHandler) buildUserPhoneUrl(accessToken string) string {
+	url := utils.NewUrlHelper(wxMiniOauthGetPhoneUrl).
+		AddParam("access_token", accessToken).
 		Build()
+	return url
+}
 
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
+// GetAccessToken 获取微信小程序后台调用accessToken
+func (w *WxMiniOauthHandler) GetAccessToken(ctx context.Context) (*WxMiniOauthToken, error) {
+	url := w.buildAccessTokenUrl()
 	result := &WxMiniOauthToken{}
-	err = json.Unmarshal(resp.Body(), &result)
+	err := utils.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
+	
 	if result.Errcode != 0 {
 		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
 	}
 
 	return result, nil
+}
+
+func (w *WxMiniOauthHandler) buildAccessTokenUrl() string {
+	url := utils.NewUrlHelper(wxMiniOauthAccessTokenUrl).
+		AddParam("grant_type", grantTypeClientCredential).
+		AddParam("appid", w.appId).
+		AddParam("secret", w.appSecret).
+		Build()
+	return url
 }

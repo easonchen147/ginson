@@ -1,10 +1,9 @@
 package oauth
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 	"ginson/pkg/utils"
-	"github.com/go-resty/resty/v2"
 )
 
 type WechatOauthHandler struct {
@@ -60,24 +59,40 @@ func (w *WechatOauthHandler) GetRedirectUrl(state string) (string, error) {
 }
 
 // GetAccessToken code换取微信授权的accessToken
-func (w *WechatOauthHandler) GetAccessToken(code string) (*WechatOauthToken, error) {
+func (w *WechatOauthHandler) GetAccessToken(ctx context.Context, code string) (*WechatOauthToken, error) {
+	url := w.buildAccessTokenUrl(code)
+	result := &WechatOauthToken{}
+	err := utils.Get(ctx, url, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Errcode != 0 {
+		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
+	}
+
+	return result, nil
+}
+
+func (w *WechatOauthHandler) buildAccessTokenUrl(code string) string {
 	url := utils.NewUrlHelper(wechatOauthAccessTokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("code", code).
 		AddParam("appid", w.appId).
 		AddParam("secret", w.appSecret).
 		Build()
+	return url
+}
 
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
+// RefreshToken 刷新accessToken有效期
+func (w *WechatOauthHandler) RefreshToken(ctx context.Context, refreshToken string) (*WechatOauthToken, error) {
+	url := w.buildRefreshTokenUrl(refreshToken)
 	result := &WechatOauthToken{}
-	err = json.Unmarshal(resp.Body(), &result)
+	err := utils.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
+
 	if result.Errcode != 0 {
 		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
 	}
@@ -85,48 +100,24 @@ func (w *WechatOauthHandler) GetAccessToken(code string) (*WechatOauthToken, err
 	return result, nil
 }
 
-// RefreshToken 刷新accessToken有效期
-func (w *WechatOauthHandler) RefreshToken(refreshToken string) (*WechatOauthToken, error) {
+func (w *WechatOauthHandler) buildRefreshTokenUrl(refreshToken string) string {
 	url := utils.NewUrlHelper(wechatOauthRefreshTokenUrl).
 		AddParam("grant_type", grantTypeRefreshToken).
 		AddParam("refresh_token", refreshToken).
 		AddParam("appid", w.appId).
 		Build()
-
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	result := &WechatOauthToken{}
-	err = json.Unmarshal(resp.Body(), &result)
-	if err != nil {
-		return nil, err
-	}
-	if result.Errcode != 0 {
-		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
-	}
-
-	return result, nil
+	return url
 }
 
 // CheckToken 检查accessToken是否有效
-func (w *WechatOauthHandler) CheckToken(accessToken, openId string) error {
-	url := utils.NewUrlHelper(wechatOauthCheckTokenUrl).
-		AddParam("access_token", accessToken).
-		AddParam("openid", openId).
-		Build()
-
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return err
-	}
-
+func (w *WechatOauthHandler) CheckToken(ctx context.Context, accessToken, openId string) error {
+	url := w.buildCheckTokenUrl(accessToken, openId)
 	result := &WechatCommonErrResp{}
-	err = json.Unmarshal(resp.Body(), &result)
+	err := utils.Get(ctx, url, &result)
 	if err != nil {
 		return err
 	}
+
 	if result.Errcode != 0 {
 		return fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
 	}
@@ -134,26 +125,34 @@ func (w *WechatOauthHandler) CheckToken(accessToken, openId string) error {
 	return nil
 }
 
-// GetUserInfo 获取微信授权用户的信息
-func (w *WechatOauthHandler) GetUserInfo(openId, accessToken string) (*WechatOauthUserInfo, error) {
-	url := utils.NewUrlHelper(wechatOauthUserInfoUrl).
-		AddParam("openid", openId).
+func (w *WechatOauthHandler) buildCheckTokenUrl(accessToken string, openId string) string {
+	url := utils.NewUrlHelper(wechatOauthCheckTokenUrl).
 		AddParam("access_token", accessToken).
+		AddParam("openid", openId).
 		Build()
+	return url
+}
 
-	resp, err := resty.New().R().Get(url)
-	if err != nil {
-		return nil, err
-	}
-
+// GetUserInfo 获取微信授权用户的信息
+func (w *WechatOauthHandler) GetUserInfo(ctx context.Context, openId, accessToken string) (*WechatOauthUserInfo, error) {
+	url := w.buildUserInfoUrl(openId, accessToken)
 	result := &WechatOauthUserInfo{}
-	err = json.Unmarshal(resp.Body(), &result)
+	err := utils.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
+
 	if result.Errcode != 0 {
 		return nil, fmt.Errorf("errCode: %d errMsg: %s", result.Errcode, result.Errmsg)
 	}
 
 	return result, nil
+}
+
+func (w *WechatOauthHandler) buildUserInfoUrl(openId string, accessToken string) string {
+	url := utils.NewUrlHelper(wechatOauthUserInfoUrl).
+		AddParam("openid", openId).
+		AddParam("access_token", accessToken).
+		Build()
+	return url
 }
