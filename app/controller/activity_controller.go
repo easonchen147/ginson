@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"ginson/pkg/log"
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +19,7 @@ func GetActivityController() *ActivityController {
 
 func (c *ActivityController) GetPrize(ctx *gin.Context) {
 	//DO SOMETHING
-	log.Info(fmt.Sprintf("%s come in", ctx.Value("openId")))
+	log.Info("%v come in", ctx.Value("openId"))
 
 	c.Success(ctx, nil)
 }

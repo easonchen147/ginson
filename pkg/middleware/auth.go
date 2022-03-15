@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"ginson/app/service"
 	"ginson/pkg/log"
 	"net/http"
@@ -23,11 +22,11 @@ func AuthMiddleware(user *service.UserService) gin.HandlerFunc {
 		}
 		userId, err := user.ParseToken(ctx, strings.TrimSpace(strings.Trim(token, "Bearer")))
 		if err == nil && userId > 0 {
-			log.Info(fmt.Sprintf("parse token success, userId: %d", userId))
+			log.Info("parse token success, userId: %d", userId)
 			ctx.Set("userId", userId)
 			ctx.Next()
 		} else {
-			log.Error(fmt.Sprintf("parse token failed, error: %s", err))
+			log.Error("parse token failed, error: %v", err)
 			ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
 				"code": 405,
 				"msg":  "用户Token无效",
@@ -49,11 +48,11 @@ func TokenMiddleware(tokenService *service.TokenService) gin.HandlerFunc {
 		}
 		openId, err := tokenService.ParseToken(ctx, strings.TrimSpace(strings.Trim(token, "Bearer")))
 		if err == nil && openId != "" {
-			log.Info(fmt.Sprintf("parse token success, openId: %d", openId))
+			log.Info("parse token success, openId: %s", openId)
 			ctx.Set("openId", openId)
 			ctx.Next()
 		} else {
-			log.Error(fmt.Sprintf("parse token failed, error: %s", err))
+			log.Error("parse token failed, error: %v", err)
 			ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
 				"code": 405,
 				"msg":  "用户Token无效",

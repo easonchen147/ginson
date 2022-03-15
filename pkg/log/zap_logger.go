@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"ginson/pkg/conf"
 	"os"
 
@@ -49,22 +50,22 @@ func Init(cfg *conf.AppConfig) {
 	Logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 }
 
-func Debug(msg string) {
-	Logger.Debug(msg)
+func Debug(msg string, val ...interface{}) {
+	Logger.Debug(fmt.Sprintf(msg, val...))
 }
 
-func Info(msg string) {
-	Logger.Info(msg)
+func Info(msg string, val ...interface{}) {
+	Logger.Info(fmt.Sprintf(msg, val...))
 }
 
-func Warn(msg string) {
-	Logger.Warn(msg)
+func Warn(msg string, val ...interface{}) {
+	Logger.Warn(fmt.Sprintf(msg, val...))
 }
 
-func Error(msg string) {
-	Logger.Error(msg)
+func Error(msg string, val ...interface{}) {
+	Logger.Error(fmt.Sprintf(msg, val...))
 }
 
-func Panic(msg string) {
-	Logger.Panic(msg)
+func Panic(msg string, val ...interface{}) {
+	Logger.Panic(fmt.Sprintf(msg, val...))
 }

@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 	"ginson/app/model"
 	"ginson/pkg/log"
 )
@@ -22,6 +21,6 @@ func (m *UserMongo) AddUserCache(ctx context.Context, user *model.User) error {
 	if err != nil {
 		return err
 	}
-	log.Info(fmt.Sprintf("add user result: %v", result.InsertedID))
+	log.Info("add user result: %v", result.InsertedID)
 	return nil
 }

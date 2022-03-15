@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"ginson/app/model"
 	"ginson/app/service"
 	"ginson/pkg/code"
@@ -71,7 +70,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 func (c *UserController) Logout(ctx *gin.Context) {
 	token := ctx.GetHeader("Authorization")
 
-	log.Debug(fmt.Sprintf("add token into blacklist, token: %s", token))
+	log.Debug("add token into blacklist, token: %s", token)
 
 	c.Success(ctx, "")
 }

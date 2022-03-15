@@ -133,6 +133,6 @@ func shutdown(server *http.Server) {
 
 	// 关闭server
 	if err := server.Shutdown(context.Background()); err != nil {
-		log.Error(fmt.Sprintf("FailedWithCode to shutdown server: %s", err))
+		log.Error("FailedWithCode to shutdown server: %v", err)
 	}
 }
