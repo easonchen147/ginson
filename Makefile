@@ -9,6 +9,7 @@ run:
 
 docker-build:
 	@docker build -t ${BINARY}:${VERSION} .
+	@docker rmi $(docker images -f "dangling=true" -q)
 
 docker-run:
 	@docker run --name=${BINARY}-${VERSION} -d -p 8080:8080 ${BINARY}:${VERSION}
