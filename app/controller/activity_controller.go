@@ -6,6 +6,7 @@ import (
 	"github.com/chromedp/chromedp/device"
 	"github.com/gin-gonic/gin"
 	"github.com/skip2/go-qrcode"
+	"net/url"
 )
 
 type ActivityController struct {
@@ -38,16 +39,26 @@ func (c *ActivityController) GetQrCode(ctx *gin.Context) {
 }
 
 func (c *ActivityController) GetScreenShot(ctx *gin.Context) {
-	// create context
-	chromedpCtx, cancel := chromedp.NewContext(ctx)
-	defer cancel()
+	query := ctx.Query("url")
+
+
 
 	chromedp.WithLogf(func(s string, i ...interface{}) {
 		log.Info(s, i)
 	})
 
+	screenShotUrl := `https://www.baidu.com/`
+	if query != "" {
+		if _, err := url.Parse(query); err == nil {
+			screenShotUrl = query
+		}
+	}
+
+	cCtx, cancel := chromedp.NewContext(ctx)
+	defer cancel()
+
 	var buf []byte
-	if err := chromedp.Run(chromedpCtx, c.fullScreenshot(`https://www.baidu.com/`, 100, &buf)); err != nil {
+	if err := chromedp.Run(cCtx, c.fullScreenshot(screenShotUrl, 100, &buf)); err != nil {
 		c.FailedWithErr(ctx, err)
 		return
 	}
