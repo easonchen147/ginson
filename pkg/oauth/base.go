@@ -21,13 +21,21 @@ const (
 
 // 微信登录授权
 const (
-	wechatOauthAuthorizeUrl    = "https://open.weixin.qq.com/connect/qrconnect"
+	wechatOauthQrCodeLoginUrl  = "https://open.weixin.qq.com/connect/qrconnect" // 扫码登录，一般用在PC端
 	wechatOauthAccessTokenUrl  = "https://api.weixin.qq.com/sns/oauth2/access_token"
 	wechatOauthRefreshTokenUrl = "https://api.weixin.qq.com/sns/oauth2/refresh_token"
 	wechatOauthCheckTokenUrl   = "https://api.weixin.qq.com/sns/auth"
 	wechatOauthUserInfoUrl     = "https://api.weixin.qq.com/sns/userinfo"
 
-	wechatOauthScopeLogin = "snsapi_login"
+	wechatOauthScopeLogin = "snsapi_login" // 网页应用使用这个，也就是qrcode扫码登录使用
+
+	wechatOauthAuthorizeUrl = "https://open.weixin.qq.com/connect/oauth2/authorize" // 微信浏览器内打开H5直接授权登录
+
+	// 以下对于直接在微信浏览器打开登录的授权范围
+	wechatOauthScopeBase     = "snsapi_base"     //snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），
+	wechatOauthScopeUserInfo = "snsapi_userinfo" //snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。并且， 即使在未关注的情况下，只要用户授权，也能获取其信息 ）
+
+	wechatOauthWechatRedirect = "#wechat_redirect"
 )
 
 // 小程序登录授权

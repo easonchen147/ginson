@@ -46,9 +46,9 @@ func NewWechatOauthHandler(appId, appSecret, redirectUrl string) *WechatOauthHan
 	}
 }
 
-// GetRedirectUrl 获取微信授权重定向地址，state可以使用唯一凭证
-func (w *WechatOauthHandler) GetRedirectUrl(state string) (string, error) {
-	url := utils.NewUrlHelper(wechatOauthAuthorizeUrl).
+// GetQrCodeRedirectUrl 获取微信授权重定向地址进行扫码，state可以使用唯一凭证
+func (w *WechatOauthHandler) GetQrCodeRedirectUrl(state string) (string, error) {
+	url := utils.NewUrlHelper(wechatOauthQrCodeLoginUrl).
 		AddParam("response_type", responseTypeCode).
 		AddParam("appid", w.appId).
 		AddParam("redirect_uri", w.redirectUrl).
@@ -56,6 +56,18 @@ func (w *WechatOauthHandler) GetRedirectUrl(state string) (string, error) {
 		AddParam("state", w.getState(state)).
 		Build()
 	return url, nil
+}
+
+// GetAuthorizeCodeUrl 微信内部H5登录获取code
+func (w *WechatOauthHandler) GetAuthorizeCodeUrl(ctx context.Context, state string) (string, error) {
+	url := utils.NewUrlHelper(wechatOauthAuthorizeUrl).
+		AddParam("response_type", responseTypeCode).
+		AddParam("appid", w.appId).
+		AddParam("redirect_uri", w.redirectUrl).
+		AddParam("scope", wechatOauthScopeUserInfo). // 默认获取用户信息权限
+		AddParam("state", w.getState(state)).
+		Build()
+	return url + wechatOauthWechatRedirect, nil
 }
 
 // GetAccessToken code换取微信授权的accessToken
