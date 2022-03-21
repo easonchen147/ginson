@@ -3,9 +3,7 @@ package controller
 import (
 	"ginson/app/model"
 	"ginson/app/service"
-	"ginson/pkg/code"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type WxMiniController struct {
@@ -27,11 +25,7 @@ func (c *WxMiniController) WxMiniLogin(ctx *gin.Context) {
 	var req *model.WxMiniLoginReq
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		if err, ok := err.(validator.ValidationErrors); ok {
-			c.FailedWithBizErr(ctx, code.ParamInvalidErr)
-		} else {
-			c.FailedWithCodeMsg(ctx, code.Failed, err.Error())
-		}
+		c.FailedWithInvalidParam(ctx, err)
 		return
 	}
 
@@ -47,11 +41,7 @@ func (c *WxMiniController) WxMiniGetUserInfo(ctx *gin.Context) {
 	var req *model.WxMiniGetUserInfoReq
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		if err, ok := err.(validator.ValidationErrors); ok {
-			c.FailedWithBizErr(ctx, code.ParamInvalidErr)
-		} else {
-			c.FailedWithCodeMsg(ctx, code.Failed, err.Error())
-		}
+		c.FailedWithInvalidParam(ctx, err)
 		return
 	}
 

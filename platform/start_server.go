@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"ginson/pkg/conf"
 	"ginson/pkg/log"
+	"ginson/pkg/middleware"
 	"ginson/pkg/router"
 	"ginson/platform/cache"
 	"ginson/platform/database"
@@ -15,6 +16,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -76,10 +78,10 @@ func StartServer(cfg *conf.AppConfig) error {
 		shutdown(server)
 	}()
 
-	log.Debug("Server started success")
+	log.Info("Server started success")
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
-		log.Debug("Server was shutdown gracefully")
+		log.Info("Server was shutdown gracefully")
 		return nil
 	}
 
@@ -95,7 +97,11 @@ func initEngine(cfg *conf.AppConfig) *gin.Engine {
 	}())
 
 	engine := gin.New()
+
+	engine.Use(middleware.Logger())
+
 	engine.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
+		log.Error("panic recovery err: %v", err)
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{
 			"code": 500,
 			"msg":  "服务器内部错误，请稍后再试！",
@@ -120,6 +126,7 @@ func listenToSystemSignals(cancel context.CancelFunc) {
 }
 
 func shutdown(server *http.Server) {
+	time.Sleep(5 * time.Second)
 	// 最后释放log
 	defer func() {
 		if err := log.Logger.Sync(); err != nil {

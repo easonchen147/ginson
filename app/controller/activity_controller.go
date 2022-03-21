@@ -6,6 +6,7 @@ import (
 	"github.com/chromedp/chromedp/device"
 	"github.com/gin-gonic/gin"
 	"github.com/skip2/go-qrcode"
+	"image/color"
 	"net/url"
 )
 
@@ -29,19 +30,27 @@ func (c *ActivityController) GetPrize(ctx *gin.Context) {
 }
 
 func (c *ActivityController) GetQrCode(ctx *gin.Context) {
-	var png []byte
-	png, err := qrcode.Encode("https://example.org", qrcode.Medium, 256)
+	data := ctx.Query("data")
+
+	q, err := qrcode.New(data, qrcode.Medium)
 	if err != nil {
 		c.FailedWithErr(ctx, err)
 		return
 	}
-	_, _ = ctx.Writer.Write(png)
+
+	q.DisableBorder = true
+	q.ForegroundColor = color.RGBA{R: 0x33, G: 0x33, B: 0x66, A: 0xff}
+	q.BackgroundColor = color.RGBA{R: 0xef, G: 0xef, B: 0xef, A: 0xff}
+
+	err = q.Write(200, ctx.Writer)
+	if err != nil {
+		c.FailedWithErr(ctx, err)
+		return
+	}
 }
 
 func (c *ActivityController) GetScreenShot(ctx *gin.Context) {
 	query := ctx.Query("url")
-
-
 
 	chromedp.WithLogf(func(s string, i ...interface{}) {
 		log.Info(s, i)

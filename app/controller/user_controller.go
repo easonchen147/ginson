@@ -3,10 +3,8 @@ package controller
 import (
 	"ginson/app/model"
 	"ginson/app/service"
-	"ginson/pkg/code"
 	"ginson/pkg/log"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type UserController struct {
@@ -29,11 +27,7 @@ func (c *UserController) Register(ctx *gin.Context) {
 	var form model.UserRegisterCommand
 	err := ctx.ShouldBindJSON(&form)
 	if err != nil {
-		if err, ok := err.(validator.ValidationErrors); ok {
-			c.FailedWithBizErr(ctx, code.ParamInvalidErr)
-		} else {
-			c.FailedWithCodeMsg(ctx, code.Failed, err.Error())
-		}
+		c.FailedWithInvalidParam(ctx, err)
 		return
 	}
 	token, bizErr := c.userService.Register(ctx, &form)
@@ -50,11 +44,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 	var form model.UserLoginCommand
 	err := ctx.ShouldBindJSON(&form)
 	if err != nil {
-		if err, ok := err.(validator.ValidationErrors); ok {
-			c.FailedWithBizErr(ctx, code.ParamInvalidErr)
-		} else {
-			c.FailedWithCodeMsg(ctx, code.Failed, err.Error())
-		}
+		c.FailedWithInvalidParam(ctx, err)
 		return
 	}
 	token, bizErr := c.userService.Login(ctx, &form)

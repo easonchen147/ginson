@@ -37,6 +37,22 @@ func (*Controller) Failed(ctx *gin.Context) {
 	})
 }
 
+func (*Controller) FailedWithInvalidParam(ctx *gin.Context, invalidParamErr error) {
+	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
+		Code: code.ParamInvalid,
+		Msg:  invalidParamErr.Error(),
+		Data: nil,
+	})
+}
+
+func (*Controller) FailedWithMsg(ctx *gin.Context, msg string) {
+	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
+		Code: code.Failed,
+		Msg:  msg,
+		Data: nil,
+	})
+}
+
 func (*Controller) FailedWithCodeMsg(ctx *gin.Context, code int, msg string) {
 	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
 		Code: code,

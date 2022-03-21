@@ -18,6 +18,7 @@ func Init(cfg *conf.AppConfig) {
 	if level.UnmarshalText([]byte(cfg.LogLevel)) != nil {
 		level = zapcore.InfoLevel
 	}
+
 	encoderConfig := zapcore.EncoderConfig{
 		LevelKey:       "level",
 		NameKey:        "name",
@@ -26,11 +27,12 @@ func Init(cfg *conf.AppConfig) {
 		StacktraceKey:  "stack",
 		CallerKey:      "location",
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.LowercaseLevelEncoder,
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
 		EncodeTime:     zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05"),
 		EncodeDuration: zapcore.StringDurationEncoder,
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
+
 	var core zapcore.Core
 	switch cfg.LogMode {
 	case "console":
