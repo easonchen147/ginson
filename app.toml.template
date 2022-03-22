@@ -4,6 +4,7 @@ http_port = 8080
 log_mode = "console"
 log_file = "logs/app.log"
 log_level = "debug"
+access_log_file = "logs/access.log"
 
 [dbs]
 

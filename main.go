@@ -146,7 +146,10 @@ func shutdown(server *http.Server) {
 	// 最后释放log
 	defer func() {
 		if err := log.Logger.Sync(); err != nil {
-			fmt.Printf("FailedWithCode to close log: %s\n", err)
+			fmt.Printf("Failed to close logger: %s\n", err)
+		}
+		if err := log.AccessLogger.Sync(); err != nil {
+			fmt.Printf("Failed to close access logger: %s\n", err)
 		}
 	}()
 

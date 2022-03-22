@@ -18,12 +18,13 @@ var AppConf *AppConfig
 type AppConfig struct {
 	File string
 
-	Env      string `toml:"env"`
-	HttpAddr string `toml:"http_addr"`
-	HttpPort int    `toml:"http_port"`
-	LogMode  string `toml:"log_mode"`
-	LogFile  string `toml:"log_file"`
-	LogLevel string `toml:"log_level"`
+	Env           string `toml:"env"`
+	HttpAddr      string `toml:"http_addr"`
+	HttpPort      int    `toml:"http_port"`
+	LogMode       string `toml:"log_mode"`
+	LogFile       string `toml:"log_file"`
+	LogLevel      string `toml:"log_level"`
+	AccessLogFile string `toml:"access_log_file"`
 
 	DbsConfig          map[string]*dbConfig `toml:"dbs"`
 	MongoConfig        *mongoConfig         `toml:"mongo"`
@@ -89,23 +90,27 @@ type mongoConfig struct {
 
 func InitConfig(file string) *AppConfig {
 	AppConf = &AppConfig{
-		File:     file,
-		Env:      Dev,
-		HttpAddr: "0.0.0.0",
-		HttpPort: 8080,
+		File:          file,
+		Env:           Dev,
+		HttpAddr:      "0.0.0.0",
+		HttpPort:      8080,
+		LogMode:       "console",
+		LogFile:       "logs/app.log",
+		LogLevel:      "debug",
+		AccessLogFile: "logs/access.log",
 	}
 	return AppConf
 }
 
-// Load 加载ini配置文件内容
+// Load 加载toml配置文件内容
 func (cfg *AppConfig) Load() error {
 	if _, err := os.Stat(cfg.File); os.IsNotExist(err) {
-		return fmt.Errorf("cfg file [%s] not existed", cfg.File)
+		return fmt.Errorf("config file %s not existed", cfg.File)
 	}
 
 	_, err := toml.DecodeFile(cfg.File, cfg)
 	if err != nil {
-		return fmt.Errorf("load file [%s] failed", cfg.File)
+		return fmt.Errorf("load config file %s failed, error: %v", cfg.File, err)
 	}
 
 	return nil

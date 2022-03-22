@@ -12,7 +12,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var Logger *zap.Logger
+var (
+	AccessLogger *zap.Logger
+	Logger       *zap.Logger
+)
 
 // Init 配置日志模块
 func Init(cfg *conf.AppConfig) {
@@ -35,10 +38,13 @@ func Init(cfg *conf.AppConfig) {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
-	var core zapcore.Core
+	var core, accessCore zapcore.Core
 	switch cfg.LogMode {
 	case "console":
 		core = zapcore.NewTee(zapcore.NewCore(
+			zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(os.Stdout), level))
+
+		accessCore = zapcore.NewTee(zapcore.NewCore(
 			zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(os.Stdout), level))
 	case "file":
 		writer := zapcore.AddSync(&lumberjack.Logger{
@@ -47,11 +53,24 @@ func Init(cfg *conf.AppConfig) {
 			MaxBackups: 0,
 			MaxAge:     30, // days
 			LocalTime:  true,
+			Compress:   true,
 		})
 		core = zapcore.NewTee(zapcore.NewCore(
 			zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(writer), level))
+
+		accessLogWriter := zapcore.AddSync(&lumberjack.Logger{
+			Filename:   cfg.LogFile,
+			MaxSize:    500, // megabytes
+			MaxBackups: 0,
+			MaxAge:     30, // days
+			LocalTime:  true,
+			Compress:   true,
+		})
+		accessCore = zapcore.NewTee(zapcore.NewCore(
+			zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(accessLogWriter), level))
 	}
 	Logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	AccessLogger = zap.New(accessCore, zap.AddCaller(), zap.AddCallerSkip(1))
 }
 
 func Debug(ctx context.Context, msg string, val ...interface{}) {
@@ -72,6 +91,11 @@ func Error(ctx context.Context, msg string, val ...interface{}) {
 
 func Panic(ctx context.Context, msg string, val ...interface{}) {
 	Logger.Panic(fmt.Sprintf(msg, val...), zapDefaultFields(ctx)...)
+}
+
+func Access(ctx context.Context, msg string, fields ...zap.Field) {
+	fields = append(fields, zapDefaultFields(ctx)...)
+	AccessLogger.Info(msg, fields...)
 }
 
 func zapDefaultFields(ctx context.Context) []zap.Field {

@@ -22,7 +22,7 @@ func Logger() gin.HandlerFunc {
 		reqQuery := c.Request.URL.RawQuery    // 路径后的参数
 		statusCode := c.Writer.Status()       // 状态码
 
-		log.Logger.Debug("RequestLog",
+		log.Access(c, "RequestLog",
 			zap.Int("code", statusCode),
 			zap.String("method", reqMethod),
 			zap.String("path", reqPath),
