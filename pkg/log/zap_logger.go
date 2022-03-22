@@ -29,7 +29,7 @@ func Init(cfg *conf.AppConfig) {
 		StacktraceKey:  "stack",
 		CallerKey:      "location",
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
 		EncodeTime:     zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05"),
 		EncodeDuration: zapcore.StringDurationEncoder,
 		EncodeCaller:   zapcore.ShortCallerEncoder,
@@ -39,13 +39,13 @@ func Init(cfg *conf.AppConfig) {
 	switch cfg.LogMode {
 	case "console":
 		core = zapcore.NewTee(zapcore.NewCore(
-			zapcore.NewConsoleEncoder(encoderConfig), zapcore.AddSync(os.Stdout), level))
+			zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(os.Stdout), level))
 	case "file":
 		writer := zapcore.AddSync(&lumberjack.Logger{
 			Filename:   cfg.LogFile,
 			MaxSize:    500, // megabytes
 			MaxBackups: 0,
-			MaxAge:     28, // days
+			MaxAge:     30, // days
 			LocalTime:  true,
 		})
 		core = zapcore.NewTee(zapcore.NewCore(
