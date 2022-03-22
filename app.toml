@@ -4,12 +4,24 @@ http_port = 8080
 log_mode = "console"
 log_file = "logs/app.log"
 log_level = "debug"
+access_log_file = "logs/access.log"
+
+[mongo]
+uri = "mongodb://dbuser:Dbuser123456.@127.0.0.1:27017/test"
+db = "test"
+connect_timeout = 5
+max_open_conn = 64
+max_pool_size = 64
+min_pool_size = 12
+
+[redis]
+addr = "127.0.0.1:6379"
+pass = "rdsuser123456"
+db = 1
+min_idle = 10
+pool_size = 64
 
 # 业务配置在这里
 [ext]
 token_secret = "@fc695ewewqewqwqdaaaaa"
-
-# 微信小程序授权配置
-wx_mini_app_id = ""
-wx_mini_app_secret = ""
 
