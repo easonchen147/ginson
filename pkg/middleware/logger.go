@@ -3,6 +3,7 @@ package middleware
 import (
 	"ginson/pkg/log"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -20,6 +21,10 @@ func Logger() gin.HandlerFunc {
 		reqUri := c.Request.RequestURI        // 请求路由
 		statusCode := c.Writer.Status()       // 状态码
 
-		log.Info(c, "%s %s %d %dms", reqMethod, reqUri, statusCode, latencyTime.Milliseconds())
+		log.Logger.Debug("Request",
+			zap.String("method", reqMethod),
+			zap.String("uri", reqUri),
+			zap.Int("code", statusCode),
+			zap.Duration("cost", latencyTime))
 	}
 }
