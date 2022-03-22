@@ -37,10 +37,10 @@ func (*Controller) Failed(ctx *gin.Context) {
 	})
 }
 
-func (*Controller) FailedWithInvalidParam(ctx *gin.Context, invalidParamErr error) {
+func (*Controller) FailedWithBindErr(ctx *gin.Context, bindErr error) {
 	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
 		Code: code.ParamInvalid,
-		Msg:  invalidParamErr.Error(),
+		Msg:  bindErr.Error(),
 		Data: nil,
 	})
 }

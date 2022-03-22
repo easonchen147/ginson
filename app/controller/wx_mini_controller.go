@@ -25,7 +25,7 @@ func (c *WxMiniController) WxMiniLogin(ctx *gin.Context) {
 	var req *model.WxMiniLoginReq
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		c.FailedWithInvalidParam(ctx, err)
+		c.FailedWithBindErr(ctx, err)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (c *WxMiniController) WxMiniGetUserInfo(ctx *gin.Context) {
 	var req *model.WxMiniGetUserInfoReq
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		c.FailedWithInvalidParam(ctx, err)
+		c.FailedWithBindErr(ctx, err)
 		return
 	}
 

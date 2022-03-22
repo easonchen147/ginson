@@ -27,7 +27,7 @@ func (c *UserController) Register(ctx *gin.Context) {
 	var form model.UserRegisterCommand
 	err := ctx.ShouldBindJSON(&form)
 	if err != nil {
-		c.FailedWithInvalidParam(ctx, err)
+		c.FailedWithBindErr(ctx, err)
 		return
 	}
 	token, bizErr := c.userService.Register(ctx, &form)
@@ -44,7 +44,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 	var form model.UserLoginCommand
 	err := ctx.ShouldBindJSON(&form)
 	if err != nil {
-		c.FailedWithInvalidParam(ctx, err)
+		c.FailedWithBindErr(ctx, err)
 		return
 	}
 	token, bizErr := c.userService.Login(ctx, &form)
