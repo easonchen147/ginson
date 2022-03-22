@@ -60,7 +60,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 func (c *UserController) Logout(ctx *gin.Context) {
 	token := ctx.GetHeader("Authorization")
 
-	log.Debug("add token into blacklist, token: %s", token)
+	log.Debug(ctx,"add token into blacklist, token: %s", token)
 
 	c.Success(ctx, "")
 }

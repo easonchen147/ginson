@@ -19,7 +19,7 @@ func Logger() gin.HandlerFunc {
 		reqMethod := c.Request.Method         // 请求方式
 		reqUri := c.Request.RequestURI        // 请求路由
 		statusCode := c.Writer.Status()       // 状态码
-		
-		log.Info("%s %s %d %dms", reqMethod, reqUri, statusCode, latencyTime.Milliseconds())
+
+		log.Info(c, "%s %s %d %dms", reqMethod, reqUri, statusCode, latencyTime.Milliseconds())
 	}
 }

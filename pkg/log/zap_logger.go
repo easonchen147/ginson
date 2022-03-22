@@ -1,10 +1,12 @@
 package log
 
 import (
+	"context"
 	"fmt"
-	"ginson/pkg/conf"
+	"ginson/pkg/constant"
 	"os"
 
+	"ginson/pkg/conf"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -27,7 +29,7 @@ func Init(cfg *conf.AppConfig) {
 		StacktraceKey:  "stack",
 		CallerKey:      "location",
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.CapitalLevelEncoder,
+		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
 		EncodeTime:     zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05"),
 		EncodeDuration: zapcore.StringDurationEncoder,
 		EncodeCaller:   zapcore.ShortCallerEncoder,
@@ -52,22 +54,40 @@ func Init(cfg *conf.AppConfig) {
 	Logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 }
 
-func Debug(msg string, val ...interface{}) {
-	Logger.Debug(fmt.Sprintf(msg, val...))
+func Debug(ctx context.Context, msg string, val ...interface{}) {
+	Logger.Debug(fmt.Sprintf(msg, val...), zapDefaultFields(ctx)...)
 }
 
-func Info(msg string, val ...interface{}) {
-	Logger.Info(fmt.Sprintf(msg, val...))
+func Info(ctx context.Context, msg string, val ...interface{}) {
+	Logger.Info(fmt.Sprintf(msg, val...), zapDefaultFields(ctx)...)
 }
 
-func Warn(msg string, val ...interface{}) {
-	Logger.Warn(fmt.Sprintf(msg, val...))
+func Warn(ctx context.Context, msg string, val ...interface{}) {
+	Logger.Warn(fmt.Sprintf(msg, val...), zapDefaultFields(ctx)...)
 }
 
-func Error(msg string, val ...interface{}) {
-	Logger.Error(fmt.Sprintf(msg, val...))
+func Error(ctx context.Context, msg string, val ...interface{}) {
+	Logger.Error(fmt.Sprintf(msg, val...), zapDefaultFields(ctx)...)
 }
 
-func Panic(msg string, val ...interface{}) {
-	Logger.Panic(fmt.Sprintf(msg, val...))
+func Panic(ctx context.Context, msg string, val ...interface{}) {
+	Logger.Panic(fmt.Sprintf(msg, val...), zapDefaultFields(ctx)...)
+}
+
+func zapDefaultFields(ctx context.Context) []zap.Field {
+	fields := make([]zap.Field, 0)
+	fields = append(fields, zap.String("traceId", getTraceId(ctx)))
+	return fields
+}
+
+func getTraceId(ctx context.Context) string {
+	obj := ctx.Value(constant.TraceIdKey)
+	if obj == nil {
+		return ""
+	}
+	traceId, ok := obj.(string)
+	if !ok {
+		return ""
+	}
+	return traceId
 }

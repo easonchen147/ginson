@@ -78,10 +78,10 @@ func StartServer(cfg *conf.AppConfig) error {
 		shutdown(server)
 	}()
 
-	log.Info("Server started success")
+	log.Info(context.Background(), "Server started success")
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
-		log.Info("Server was shutdown gracefully")
+		log.Info(context.Background(),"Server was shutdown gracefully")
 		return nil
 	}
 
@@ -98,10 +98,10 @@ func initEngine(cfg *conf.AppConfig) *gin.Engine {
 
 	engine := gin.New()
 
+	engine.Use(middleware.Trace())
 	engine.Use(middleware.Logger())
-
 	engine.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
-		log.Error("panic recovery err: %v", err)
+		log.Error(c, "panic recovery: %v", err)
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{
 			"code": 500,
 			"msg":  "服务器内部错误，请稍后再试！",
@@ -140,6 +140,6 @@ func shutdown(server *http.Server) {
 
 	// 关闭server
 	if err := server.Shutdown(context.Background()); err != nil {
-		log.Error("FailedWithCode to shutdown server: %v", err)
+		log.Error(context.Background(), "FailedWithCode to shutdown server: %v", err)
 	}
 }

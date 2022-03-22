@@ -29,7 +29,7 @@ func GetWxMiniService() *WxMiniService {
 func (w *WxMiniService) WxMiniLogin(ctx context.Context, req *model.WxMiniLoginReq) (*model.WxMiniLoginResp, code.BizErr) {
 	sessionInfo, err := w.wxMiniOauthHandler.CodeToSessionKey(ctx, req.Code)
 	if err != nil {
-		log.Error("code to session key failed, error: %v", err)
+		log.Error(ctx, "code to session key failed, error: %v", err)
 		return nil, code.BizError(err)
 	}
 
@@ -42,7 +42,7 @@ func (w *WxMiniService) WxMiniLogin(ctx context.Context, req *model.WxMiniLoginR
 	if req.EncryptedData != "" && req.Iv != "" {
 		userInfo, err := w.wxMiniOauthHandler.GetUserInfo(sessionInfo.SessionKey, req.EncryptedData, req.Iv)
 		if err != nil {
-			log.Error("code to session key failed, error: %v", err)
+			log.Error(ctx, "code to session key failed, error: %v", err)
 			return nil, code.BizError(err)
 		}
 		result.UserInfo = w.populateUserInfoResp(userInfo)
@@ -68,7 +68,7 @@ func (w *WxMiniService) WxMiniGetUserInfo(ctx context.Context, req *model.WxMini
 
 	userInfo, err := w.wxMiniOauthHandler.GetUserInfo(sessionKey, req.EncryptedData, req.Iv)
 	if err != nil {
-		log.Error("code to session key failed, error: %v", err)
+		log.Error(ctx, "code to session key failed, error: %v", err)
 		return nil, code.BizError(err)
 	}
 

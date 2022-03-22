@@ -24,7 +24,7 @@ func GetActivityController() *ActivityController {
 
 func (c *ActivityController) GetPrize(ctx *gin.Context) {
 	//DO SOMETHING
-	log.Info("%v come in", ctx.Value("openId"))
+	log.Info(ctx,"%v come in", ctx.Value("openId"))
 
 	c.Success(ctx, nil)
 }
@@ -53,7 +53,7 @@ func (c *ActivityController) GetScreenShot(ctx *gin.Context) {
 	query := ctx.Query("url")
 
 	chromedp.WithLogf(func(s string, i ...interface{}) {
-		log.Info(s, i)
+		log.Info(ctx, s, i)
 	})
 
 	screenShotUrl := `https://www.baidu.com/`

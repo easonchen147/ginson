@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"ginson/pkg/conf"
@@ -68,5 +69,5 @@ func openConn(url string, idle, open int) (*gorm.DB, error) {
 type Writer struct{}
 
 func (w Writer) Printf(format string, args ...interface{}) {
-	log.Debug(fmt.Sprintf(format, args...))
+	log.Debug(context.Background(), fmt.Sprintf(format, args...))
 }
