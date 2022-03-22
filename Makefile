@@ -9,13 +9,21 @@ run:
 
 docker-build:
 	@docker build -t ${BINARY}:${VERSION} .
-	@docker rmi $(docker images -f "dangling=true" -q)
+	@docker rmi $$(docker images -f "dangling=true" -q)
 
 docker-run:
-	@docker run --name=${BINARY}-${VERSION} -d -p 8080:8080 ${BINARY}:${VERSION}
+	@docker run --name=${BINARY} -d -p 8080:8080 ${BINARY}:${VERSION}
+
+docker-stop:
+	@docker stop ${BINARY} -t 5
+
+docker-clear:
+	@docker rmi $$(docker images -f "dangling=true" -q)
 
 help:
 	@echo "make build 编译程序"
 	@echo "make run 运行程序"
 	@echo "make docker-build 构建镜像"
 	@echo "make docker-run 运行容器"
+	@echo "make docker-stop 停止容器"
+	@echo "make docker-clear 清除none镜像"

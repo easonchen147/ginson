@@ -6,13 +6,14 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
-	"ginson/pkg/constant"
 	"hash"
 	"io"
+	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"ginson/pkg/constant"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
@@ -67,6 +68,11 @@ func GetUuidV4() string {
 		}
 	}
 	return ""
+}
+
+// GetUuidV4Simple 返回uuid v4 不带-
+func GetUuidV4Simple() string {
+	return strings.ReplaceAll(GetUuidV4(), "-", "")
 }
 
 // ParseDate 转时间格式 yyyy-MM-dd

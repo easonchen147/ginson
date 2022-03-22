@@ -18,13 +18,15 @@ func Logger() gin.HandlerFunc {
 
 		latencyTime := endTime.Sub(startTime) // 执行时间
 		reqMethod := c.Request.Method         // 请求方式
-		reqUri := c.Request.RequestURI        // 请求路由
+		reqPath := c.Request.URL.Path         // 请求路径
+		reqQuery := c.Request.URL.RawQuery    // 路径后的参数
 		statusCode := c.Writer.Status()       // 状态码
 
-		log.Logger.Debug("Request",
-			zap.String("method", reqMethod),
-			zap.String("uri", reqUri),
+		log.Logger.Debug("RequestLog",
 			zap.Int("code", statusCode),
+			zap.String("method", reqMethod),
+			zap.String("path", reqPath),
+			zap.String("query", reqQuery),
 			zap.Duration("cost", latencyTime))
 	}
 }
