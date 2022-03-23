@@ -38,6 +38,7 @@ jobs:
             echo update and deploy ginson
             docker stop ginson
             docker rm ginson
+            docker rmi easonchen147/ginson:latest
             docker run --name=ginson -d -p 8080:8080 easonchen147/ginson:latest
           last_ssh: |
             echo done
