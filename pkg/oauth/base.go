@@ -1,6 +1,11 @@
 package oauth
 
-import "ginson/pkg/utils"
+import (
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
+	"ginson/pkg/utils"
+)
 
 const (
 	// 授权类型
@@ -38,7 +43,7 @@ const (
 	wechatOauthWechatRedirect = "#wechat_redirect"
 )
 
-// 小程序登录授权
+// 微信小程序登录授权
 const (
 	wxMiniOauthAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token"
 	wxMiniOauthCode2TokenUrl  = "https://api.weixin.qq.com/sns/jscode2session"
@@ -53,8 +58,23 @@ const (
 	qqOauthUserInfoUrl    = "https://graph.qq.com/user/get_user_info"
 )
 
-// WechatCommonErrResp 微信通用错误响应结构
-type WechatCommonErrResp struct {
+// QQ小程序登录授权
+const (
+	qqMiniOauthCode2TokenUrl = "https://api.q.qq.com/sns/jscode2session"
+)
+
+type WatermarkInfo struct {
+	Appid     string `json:"appid"`
+	Timestamp int64  `json:"timestamp"`
+}
+
+// WatermarkValidate 校验 appId与watermark里的 是否一致
+func (w *WatermarkInfo) WatermarkValidate(appId string) bool {
+	return appId == w.Appid
+}
+
+// CommonErrResp 微信通用错误响应结构
+type CommonErrResp struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
 }
@@ -97,4 +117,59 @@ func (b *BaseOauthHandler) GetGenderByString(gender string) int {
 	default:
 		return Unknown
 	}
+}
+
+type MiniOauthDataDecrypt struct {
+	SessionKey    string
+	EncryptedData string
+	Iv            string
+}
+
+func NewMiniOauthDataDecrypt(sessionKey, encryptedData, iv string) *MiniOauthDataDecrypt {
+	return &MiniOauthDataDecrypt{
+		SessionKey:    sessionKey,
+		EncryptedData: encryptedData,
+		Iv:            iv,
+	}
+}
+
+// Decrypt 解密用户信息
+func (m *MiniOauthDataDecrypt) Decrypt() (string, error) {
+	aesKey, err := base64.StdEncoding.DecodeString(m.SessionKey)
+	if err != nil {
+		return "", err
+	}
+
+	aesIv, err := base64.StdEncoding.DecodeString(m.Iv)
+	if err != nil {
+		return "", err
+	}
+
+	aesCipherText, err := base64.StdEncoding.DecodeString(m.EncryptedData)
+	if err != nil {
+		return "", err
+	}
+
+	aesPlantText := make([]byte, len(aesCipherText))
+
+	aesBlock, err := aes.NewCipher(aesKey)
+	if err != nil {
+		return "", err
+	}
+
+	mode := cipher.NewCBCDecrypter(aesBlock, aesIv)
+	mode.CryptBlocks(aesPlantText, aesCipherText)
+	aesPlantText = m.PKCS7UnPadding(aesPlantText)
+
+	return string(aesPlantText), nil
+}
+
+// PKCS7UnPadding return un padding []Byte plantText
+func (m *MiniOauthDataDecrypt) PKCS7UnPadding(plantText []byte) []byte {
+	length := len(plantText)
+	if length > 0 {
+		unPadding := int(plantText[length-1])
+		return plantText[:(length - unPadding)]
+	}
+	return plantText
 }

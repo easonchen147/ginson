@@ -13,7 +13,7 @@ type WechatOauthHandler struct {
 }
 
 type WechatOauthToken struct {
-	WechatCommonErrResp
+	CommonErrResp
 	AccessToken  string `json:"access_token"`
 	ExpiresIn    int    `json:"expires_in"`
 	RefreshToken string `json:"refresh_token"`
@@ -22,7 +22,7 @@ type WechatOauthToken struct {
 }
 
 type WechatOauthUserInfo struct {
-	WechatCommonErrResp
+	CommonErrResp
 	Openid     string   `json:"openid"`
 	Unionid    string   `json:"unionid"`
 	Nickname   string   `json:"nickname"`
@@ -124,7 +124,7 @@ func (w *WechatOauthHandler) buildRefreshTokenUrl(refreshToken string) string {
 // CheckToken 检查accessToken是否有效
 func (w *WechatOauthHandler) CheckToken(ctx context.Context, accessToken, openId string) error {
 	url := w.buildCheckTokenUrl(accessToken, openId)
-	result := &WechatCommonErrResp{}
+	result := &CommonErrResp{}
 	err := utils.Get(ctx, url, &result)
 	if err != nil {
 		return err

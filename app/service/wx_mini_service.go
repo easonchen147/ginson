@@ -82,5 +82,5 @@ func (w *WxMiniService) WxMiniGetUserInfo(ctx context.Context, req *model.WxMini
 }
 
 func (w *WxMiniService) populateUserInfoResp(userInfo *oauth.WxMiniOauthUserInfo) *model.WxMiniGetUserInfoResp {
-	return &model.WxMiniGetUserInfoResp{Nickname: userInfo.Nickname, AvatarUrl: userInfo.AvatarUrl}
+	return &model.WxMiniGetUserInfoResp{Nickname: userInfo.NickName, AvatarUrl: userInfo.AvatarUrl}
 }

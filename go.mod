@@ -14,7 +14,6 @@ require (
 	github.com/panjf2000/ants/v2 v2.4.8
 	github.com/segmentio/kafka-go v0.4.25
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
-	github.com/xlstudio/wxbizdatacrypt v1.0.2
 	go.mongodb.org/mongo-driver v1.8.4
 	go.uber.org/zap v1.19.1
 	gorm.io/driver/mysql v1.2.1

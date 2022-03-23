@@ -1,6 +1,7 @@
 # ginson 开发脚手架
 
 ![issue](https://img.shields.io/github/issues/easonchen147/ginson)
+![build](https://img.shields.io/github/workflow/status/easonchen147/ginson/Deploy)
 ![forks](https://img.shields.io/github/forks/easonchen147/ginson)
 ![start](https://img.shields.io/github/stars/easonchen147/ginson)
 ![license](https://img.shields.io/github/license/easonchen147/ginson)
