@@ -31,7 +31,7 @@ jobs:
           connect_timeout: 10s
           first_ssh: |
             echo update and deploy ginson
-            docker stop ginson -t 5
+            docker stop ginson
             docker rm ginson
             docker run --name=ginson -d -p 8080:8080 easonchen147/ginson:latest
           last_ssh: |

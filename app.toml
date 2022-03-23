@@ -7,7 +7,7 @@ log_level = "debug"
 access_log_file = "logs/access.log"
 
 [mongo]
-uri = "mongodb://dbuser:Dbuser123456.@172.17.0.1:27017/test"
+uri = "mongodb://dbuser:Dbuser123456.@172.17.0.1:27017/?connect=direct&authSource=admin"
 db = "test"
 connect_timeout = 5
 max_open_conn = 64
