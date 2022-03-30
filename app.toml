@@ -6,6 +6,13 @@ log_file = "logs/app.log"
 log_level = "debug"
 access_log_file = "logs/access.log"
 
+[dbs]
+
+[dbs.default]
+uri = "dbuser:Dbuser123456.@tcp(172.17.0.1:3306)/ginson?charset=utf8mb4&parseTime=True&loc=Local"
+max_idle_conn = 5
+max_open_conn = 50
+
 [mongo]
 uri = "mongodb://dbuser:Dbuser123456.@172.17.0.1:27017/?connect=direct&authSource=admin"
 db = "test"
