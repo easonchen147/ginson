@@ -1,28 +1,38 @@
 package model
 
 import (
-	"time"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	Id        uint       `json:"id" gorm:"primaryKey"`
-	Name      string     `json:"name"`
-	Email     string     `json:"email"`
-	Password  string     `json:"password"`
-	Salt      string     `json:"salt"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
+	gorm.Model
+	OpenId   string `gorm:"not null; uniqueIndex:open_id_source_uniq,priority:1"` // 第三方登录openId
+	Source   string `gorm:"not null; uniqueIndex:open_id_source_uniq,priority:2"` // 哪个平台登录
+	NickName string `gorm:"not null"`
+	Avatar   string
+	Age      int
+	Gender   int // 0=unknown 1=male 2=female
 }
 
-type UserRegisterCommand struct {
-	Name       string `form:"name" json:"name" binding:"gte=1,lte=20"`
-	Email      string `form:"email" json:"email" binding:"required,email"`
-	Password   string `form:"password" json:"password" binding:"required,gte=6"`
-	RePassword string `form:"re_password" json:"re_password" binding:"eqfield=Password"`
+type CreateUserTokenReq struct {
+	OpenId   string
+	Source   string
+	NickName string
+	Avatar   string
+	Age      int
+	Gender   int
 }
 
-type UserLoginCommand struct {
-	Email    string `form:"name" json:"email" binding:"required,email"`
-	Password string `form:"password" json:"password" binding:"required,gte=6"`
+type UserTokenResp struct {
+	NickName string `json:"nickName"`
+	Avatar   string `json:"avatar"`
+	Token    string `json:"token"`
+}
+
+type UserInfo struct {
+	UserId   uint
+	NickName string
+	Avatar   string
+	Age      int
+	Gender   int
 }

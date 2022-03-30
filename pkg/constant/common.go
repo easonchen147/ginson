@@ -13,4 +13,5 @@ const (
 	OauthSourceWxMini = "WxMini"
 	OauthSourceWechat = "Wechat"
 	OauthSourceQQ     = "QQ"
+	OauthSourceQQMini = "QQMini"
 )

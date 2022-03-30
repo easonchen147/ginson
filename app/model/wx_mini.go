@@ -7,17 +7,8 @@ type WxMiniLoginReq struct {
 	Iv            string `json:"iv"`
 }
 
-type WxMiniLoginResp struct {
-	Token    string                 `json:"token"`
-	UserInfo *WxMiniGetUserInfoResp `json:"user_info"`
-}
-
 type WxMiniGetUserInfoReq struct {
 	EncryptedData string `json:"encrypted_data" binding:"required"`
 	Iv            string `json:"iv" binding:"required"`
 }
 
-type WxMiniGetUserInfoResp struct {
-	Nickname  string `json:"nickname"`
-	AvatarUrl string `json:"avatarUrl"`
-}

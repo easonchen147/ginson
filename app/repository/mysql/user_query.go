@@ -2,9 +2,7 @@ package mysql
 
 import (
 	"context"
-	"errors"
 	"ginson/app/model"
-	"gorm.io/gorm"
 )
 
 type UserQuery struct {
@@ -21,22 +19,18 @@ func (q *UserQuery) CreateUser(ctx context.Context, user *model.User) error {
 	return q.db().Create(user).Error
 }
 
-func (q *UserQuery) IsUserEmailExisted(ctx context.Context, email string) (bool, error) {
+func (q *UserQuery) GetUserById(ctx context.Context, userId uint) (*model.User, error) {
 	var user model.User
-	err := q.db().Where("email = ?", email).First(&user).Error
+	err := q.db().First(&user, userId).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return false, nil
-		} else {
-			return false, err
-		}
+		return nil, err
 	}
-	return true, nil
+	return &user, nil
 }
 
-func (q *UserQuery) FindUserByEmail(ctx context.Context, email string) (*model.User, error) {
+func (q *UserQuery) FindByOpenIdAndSource(ctx context.Context, openId, source string) (*model.User, error) {
 	var user model.User
-	err := q.db().Where("email = ?", email).First(&user).Error
+	err := q.db().Where("openId = ? and source = ? ", openId, source).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

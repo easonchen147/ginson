@@ -36,19 +36,3 @@ func (c *WxMiniController) WxMiniLogin(ctx *gin.Context) {
 	}
 	c.Success(ctx, resp)
 }
-
-func (c *WxMiniController) WxMiniGetUserInfo(ctx *gin.Context) {
-	var req *model.WxMiniGetUserInfoReq
-	err := ctx.ShouldBindJSON(&req)
-	if err != nil {
-		c.FailedWithBindErr(ctx, err)
-		return
-	}
-
-	resp, bizErr := c.wxMiniService.WxMiniGetUserInfo(ctx, req)
-	if bizErr != nil {
-		c.FailedWithBizErr(ctx, bizErr)
-		return
-	}
-	c.Success(ctx, resp)
-}

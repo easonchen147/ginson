@@ -12,6 +12,5 @@ type WxMiniRouter struct {
 var wxMiniRouter = &WxMiniRouter{controller: controller.GetWxMiniController()}
 
 func (c *WxMiniRouter) BindRoutes(group *gin.RouterGroup) {
-	group.POST("/login", c.controller.WxMiniLogin)               //微信授权
-	group.POST("/get-user-info", c.controller.WxMiniGetUserInfo) //微信用户信息获取
+	group.POST("/login", c.controller.WxMiniLogin)
 }

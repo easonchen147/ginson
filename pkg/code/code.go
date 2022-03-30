@@ -9,17 +9,16 @@ const (
 
 // 业务使用
 const (
-	EmailExists     = 10000
-	EmailNotExists  = 10001
-	EmailOrPswWrong = 10002
-	LoginFailed     = 10003
+	LoginFailed   = 10000
+	TokenInvalid  = 10001
+	OpenIdInvalid = 10002
+	TokenEmpty    = 10003
 )
 
 var codeToMsg = map[int]string{
-	Failed:          "服务器异常",
-	ParamInvalid:    "参数错误",
-	EmailExists:     "邮箱已存在",
-	EmailNotExists:  "邮箱不存在",
-	EmailOrPswWrong: "邮箱或密码错误",
-	LoginFailed:     "登录失败",
+	Failed:        "服务器异常",
+	ParamInvalid:  "参数错误",
+	LoginFailed:   "登录失败",
+	TokenInvalid:  "Token不合法",
+	OpenIdInvalid: "OpenId为空",
 }

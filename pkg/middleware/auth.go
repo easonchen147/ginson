@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"ginson/app/service"
+	"ginson/pkg/code"
 	"ginson/pkg/log"
 	"net/http"
 	"strings"
@@ -9,54 +10,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthMiddleware 用户鉴权
-func AuthMiddleware(user *service.UserService) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		token := ctx.GetHeader("Authorization")
-		if token == "" {
-			ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code": 405,
-				"msg":  "未登录",
-			})
-			return
-		}
-		userId, err := user.ParseToken(ctx, strings.TrimSpace(strings.Trim(token, "Bearer")))
-		if err == nil && userId > 0 {
-			log.Info(ctx,"parse token success, userId: %d", userId)
-			ctx.Set("userId", userId)
-			ctx.Next()
-		} else {
-			log.Error(ctx,"parse token failed, error: %v", err)
-			ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code": 405,
-				"msg":  "用户Token无效",
-			})
-		}
-	}
-}
-
 // TokenMiddleware Token校验
-func TokenMiddleware(tokenService *service.TokenService) gin.HandlerFunc {
+func TokenMiddleware(userService *service.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.GetHeader("Authorization")
 		if token == "" {
-			ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code": 405,
-				"msg":  "未登录",
-			})
+			ctx.AbortWithStatusJSON(http.StatusOK, code.BizErrorWithCode(code.TokenEmpty))
 			return
 		}
-		openId, err := tokenService.ParseToken(ctx, strings.TrimSpace(strings.Trim(token, "Bearer")))
-		if err == nil && openId != "" {
-			log.Info(ctx,"parse token success, openId: %s", openId)
-			ctx.Set("openId", openId)
-			ctx.Next()
-		} else {
-			log.Error(ctx,"parse token failed, error: %v", err)
-			ctx.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code": 405,
-				"msg":  "用户Token无效",
-			})
+
+		userId, err := userService.ParseToken(ctx, strings.TrimSpace(strings.Trim(token, "Bearer")))
+		if err != nil || userId == 0 {
+			log.Error(ctx, "parse token failed, error: %v", err)
+			ctx.AbortWithStatusJSON(http.StatusOK, err)
+			return
 		}
+
+		log.Info(ctx, "parse token success, userId: %s", userId)
+		ctx.Set("userId", userId)
+		ctx.Next()
 	}
 }
