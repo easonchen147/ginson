@@ -5,21 +5,21 @@ import (
 	"ginson/app/model"
 )
 
-type UserQuery struct {
-	*BaseQuery
+type UserDb struct {
+	*BaseDb
 }
 
-var userQuery = &UserQuery{BaseQuery: baseQuery}
+var userDb = &UserDb{BaseDb: baseDb}
 
-func GetUserQuery() *UserQuery {
-	return userQuery
+func GetUserDb() *UserDb {
+	return userDb
 }
 
-func (q *UserQuery) CreateUser(ctx context.Context, user *model.User) error {
+func (q *UserDb) CreateUser(ctx context.Context, user *model.User) error {
 	return q.db().Create(user).Error
 }
 
-func (q *UserQuery) GetUserById(ctx context.Context, userId uint) (*model.User, error) {
+func (q *UserDb) GetUserById(ctx context.Context, userId uint) (*model.User, error) {
 	var user model.User
 	err := q.db().First(&user, userId).Error
 	if err != nil {
@@ -28,7 +28,7 @@ func (q *UserQuery) GetUserById(ctx context.Context, userId uint) (*model.User, 
 	return &user, nil
 }
 
-func (q *UserQuery) FindByOpenIdAndSource(ctx context.Context, openId, source string) (*model.User, error) {
+func (q *UserDb) FindByOpenIdAndSource(ctx context.Context, openId, source string) (*model.User, error) {
 	var user model.User
 	err := q.db().Where("openId = ? and source = ? ", openId, source).First(&user).Error
 	if err != nil {

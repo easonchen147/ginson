@@ -5,10 +5,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type BaseQuery struct{}
+type BaseDb struct{}
 
-var baseQuery = &BaseQuery{}
+var baseDb = &BaseDb{}
 
-func (b *BaseQuery) db(dbName ...string) *gorm.DB {
+func (b *BaseDb) db(dbName ...string) *gorm.DB {
 	return database.DB(dbName...)
 }
