@@ -1,4 +1,4 @@
-FROM golang:1.17 as build
+FROM golang:1.18 as build
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
