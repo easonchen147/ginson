@@ -32,5 +32,8 @@ func getByJson[T any](ctx context.Context, key string) (*T, error) {
 
 	obj := new(T)
 	err = json.Unmarshal([]byte(jsonStr), &obj)
-	return obj, err
+	if err != nil {
+		return nil, err
+	}
+	return obj, nil
 }
