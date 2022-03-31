@@ -15,30 +15,30 @@ jobs:
         with:
           ref: "main"
 
-      - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
-        with:
-          name: easonchen147/ginson
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          tags: "latest"
-
-      - name: ssh scp ssh pipelines
-        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
-        env:
-          WELCOME: "ssh scp ssh pipelines"
-          LASTSSH: "Doing something after copying"
-        with:
-          host: ${{ secrets.HOST }}
-          user: ${{ secrets.USERNAME }}
-          pass: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          connect_timeout: 10s
-          first_ssh: |
-            echo update and deploy ginson
-            docker stop ginson
-            docker rm ginson
-            docker rmi easonchen147/ginson:latest
-            docker run --name=ginson -d -p 8080:8080 easonchen147/ginson:latest
-          last_ssh: |
-            echo done
+#      - name: Publish to Registry
+#        uses: elgohr/Publish-Docker-Github-Action@master
+#        with:
+#          name: easonchen147/ginson
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#          tags: "latest"
+#
+#      - name: ssh scp ssh pipelines
+#        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+#        env:
+#          WELCOME: "ssh scp ssh pipelines"
+#          LASTSSH: "Doing something after copying"
+#        with:
+#          host: ${{ secrets.HOST }}
+#          user: ${{ secrets.USERNAME }}
+#          pass: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
+#          connect_timeout: 10s
+#          first_ssh: |
+#            echo update and deploy ginson
+#            docker stop ginson
+#            docker rm ginson
+#            docker rmi easonchen147/ginson:latest
+#            docker run --name=ginson -d -p 8080:8080 easonchen147/ginson:latest
+#          last_ssh: |
+#            echo done
