@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"ginson/pkg/code"
 	"ginson/pkg/conf"
 	"ginson/pkg/log"
 	"ginson/pkg/middleware"
@@ -80,8 +81,11 @@ func initialize(cfg *conf.AppConfig) error {
 // startServer 启动服务
 func startServer(cfg *conf.AppConfig) error {
 	server := &http.Server{
-		Addr:    cfg.HttpAddr + ":" + strconv.Itoa(cfg.HttpPort),
-		Handler: initEngine(cfg),
+		Addr:           cfg.HttpAddr + ":" + strconv.Itoa(cfg.HttpPort),
+		Handler:        initEngine(cfg),
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	go listenToSystemSignals(cancel)
@@ -116,10 +120,7 @@ func initEngine(cfg *conf.AppConfig) *gin.Engine {
 	engine.Use(middleware.Logger())
 	engine.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
 		log.Error(c, "panic recovery: %v", err)
-		c.AbortWithStatusJSON(http.StatusOK, gin.H{
-			"code": 500,
-			"msg":  "服务器内部错误，请稍后再试！",
-		})
+		c.AbortWithStatusJSON(http.StatusOK, code.ServerErr)
 	}))
 
 	router.RegisterRoutes(engine)
@@ -159,6 +160,6 @@ func shutdown(server *http.Server) {
 
 	// 关闭server
 	if err := server.Shutdown(context.Background()); err != nil {
-		log.Error(context.Background(), "FailedWithCode to shutdown server: %v", err)
+		log.Error(context.Background(), "Shutdown server failed, error: %v", err)
 	}
 }

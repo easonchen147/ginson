@@ -44,6 +44,7 @@ func BizError(err error) BizErr {
 
 // 系统常用error
 var (
-	FailedErr       = BizErrorWithCode(Failed)
-	ParamInvalidErr = BizErrorWithCode(ParamInvalid)
+	FailedErr = BizErrorWithCode(Failed)
+	ParamErr  = BizErrorWithCode(ParamInvalid)
+	ServerErr = BizErrorWithCode(ServerError)
 )
