@@ -30,7 +30,7 @@ func (q *UserDb) GetUserById(ctx context.Context, userId uint) (*model.User, err
 
 func (q *UserDb) FindByOpenIdAndSource(ctx context.Context, openId, source string) (*model.User, error) {
 	var user model.User
-	err := q.db().Where("openId = ? and source = ? ", openId, source).First(&user).Error
+	err := q.db().Where("open_id = ? and source = ? ", openId, source).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

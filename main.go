@@ -83,9 +83,6 @@ func startServer(cfg *conf.AppConfig) error {
 	server := &http.Server{
 		Addr:           cfg.HttpAddr + ":" + strconv.Itoa(cfg.HttpPort),
 		Handler:        initEngine(cfg),
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	go listenToSystemSignals(cancel)

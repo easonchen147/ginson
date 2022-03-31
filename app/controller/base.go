@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"ginson/app/model/resp"
 	"ginson/pkg/code"
 	"net/http"
 
@@ -9,12 +10,6 @@ import (
 
 type Controller struct{}
 
-type commonResp struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
-}
-
 var BaseController = &Controller{}
 
 func (*Controller) Index(ctx *gin.Context) {
@@ -22,57 +17,29 @@ func (*Controller) Index(ctx *gin.Context) {
 }
 
 func (*Controller) Success(ctx *gin.Context, data interface{}) {
-	ctx.JSON(http.StatusOK, commonResp{
-		Code: code.Success,
-		Msg:  "ok",
-		Data: data,
-	})
+	ctx.JSON(http.StatusOK, resp.NewResponseSuccess(data))
 }
 
 func (*Controller) Failed(ctx *gin.Context) {
-	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
-		Code: code.FailedErr.Code(),
-		Msg:  code.FailedErr.Msg(),
-		Data: nil,
-	})
+	ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailed())
 }
 
 func (*Controller) FailedWithBindErr(ctx *gin.Context, bindErr error) {
-	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
-		Code: code.ParamInvalid,
-		Msg:  bindErr.Error(),
-		Data: nil,
-	})
+	ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedBinding(bindErr))
 }
 
 func (*Controller) FailedWithMsg(ctx *gin.Context, msg string) {
-	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
-		Code: code.Failed,
-		Msg:  msg,
-		Data: nil,
-	})
+	ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedMsg(msg))
 }
 
 func (*Controller) FailedWithCodeMsg(ctx *gin.Context, code int, msg string) {
-	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
-		Code: code,
-		Msg:  msg,
-		Data: nil,
-	})
+	ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedCodeMsg(code, msg))
 }
 
 func (*Controller) FailedWithBizErr(ctx *gin.Context, bizErr code.BizErr) {
-	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
-		Code: bizErr.Code(),
-		Msg:  bizErr.Msg(),
-		Data: nil,
-	})
+	ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedBizErr(bizErr))
 }
 
 func (*Controller) FailedWithErr(ctx *gin.Context, err error) {
-	ctx.AbortWithStatusJSON(http.StatusOK, commonResp{
-		Code: code.Failed,
-		Msg:  err.Error(),
-		Data: nil,
-	})
+	ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedErr(err))
 }

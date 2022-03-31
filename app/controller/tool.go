@@ -10,26 +10,19 @@ import (
 	"net/url"
 )
 
-type ActivityController struct {
+type ToolController struct {
 	*Controller
 }
 
-var activityController = &ActivityController{
+var toolController = &ToolController{
 	Controller: BaseController,
 }
 
-func GetActivityController() *ActivityController {
-	return activityController
+func GetToolController() *ToolController {
+	return toolController
 }
 
-func (c *ActivityController) GetPrize(ctx *gin.Context) {
-	//DO SOMETHING
-	log.Info(ctx,"%v come in", ctx.Value("openId"))
-
-	c.Success(ctx, nil)
-}
-
-func (c *ActivityController) GetQrCode(ctx *gin.Context) {
+func (c *ToolController) GetQrCode(ctx *gin.Context) {
 	data := ctx.Query("data")
 
 	q, err := qrcode.New(data, qrcode.Medium)
@@ -49,7 +42,7 @@ func (c *ActivityController) GetQrCode(ctx *gin.Context) {
 	}
 }
 
-func (c *ActivityController) GetScreenShot(ctx *gin.Context) {
+func (c *ToolController) GetScreenShot(ctx *gin.Context) {
 	query := ctx.Query("url")
 
 	chromedp.WithLogf(func(s string, i ...interface{}) {
@@ -74,11 +67,11 @@ func (c *ActivityController) GetScreenShot(ctx *gin.Context) {
 	_, _ = ctx.Writer.Write(buf)
 }
 
-func (c *ActivityController) fullScreenshot(url string, quality int, res *[]byte) chromedp.Tasks {
+func (c *ToolController) fullScreenshot(url string, quality int, res *[]byte) chromedp.Tasks {
 	return chromedp.Tasks{
 		chromedp.Emulate(device.IPhoneXR),
 		chromedp.Navigate(url),
-		//chromedp.EvaluateAsDevTools(`p = document.querySelector("#hotsearch-refresh-btn > span");p.innerText="我是傻逼";`, nil),
+		//chromedp.EvaluateAsDevTools(`p = document.querySelector("#hotsearch-refresh-btn > span");p.innerText="我调整了标题";`, nil),
 		chromedp.FullScreenshot(res, quality),
 	}
 }

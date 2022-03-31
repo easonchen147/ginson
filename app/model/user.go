@@ -15,8 +15,8 @@ type User struct {
 }
 
 type CreateUserTokenReq struct {
-	OpenId   string `json:"openId"`
-	Source   string `json:"source"`
+	OpenId   string `json:"openId" binding:"required"`
+	Source   string `json:"source" binding:"required"`
 	NickName string `json:"nickName"`
 	Avatar   string `json:"avatar"`
 	Age      int    `json:"age"`

@@ -1,5 +1,7 @@
 package code
 
+import "fmt"
+
 type BizCodeMsg interface {
 	Code() int
 	Msg() string
@@ -27,7 +29,7 @@ func (b *bizError) Msg() string {
 }
 
 func (b *bizError) Error() string {
-	return b.msg
+	return fmt.Sprintf("%d %s", b.Code(), b.Msg())
 }
 
 func BizErrorWithCode(code int) BizErr {
@@ -47,4 +49,12 @@ var (
 	FailedErr = BizErrorWithCode(Failed)
 	ParamErr  = BizErrorWithCode(ParamInvalid)
 	ServerErr = BizErrorWithCode(ServerError)
+)
+
+// 定义模块功能错误
+var (
+	LoginFailedErr   = BizErrorWithCode(LoginFailed)
+	TokenInvalidErr  = BizErrorWithCode(TokenInvalid)
+	TokenEmptyErr    = BizErrorWithCode(TokenEmpty)
+	OpenIdInvalidErr = BizErrorWithCode(OpenIdInvalid)
 )

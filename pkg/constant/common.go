@@ -1,5 +1,7 @@
 package constant
 
+import "ginson/pkg/conf"
+
 const (
 	TraceIdKey = "TraceId"
 )
@@ -15,3 +17,8 @@ const (
 	OauthSourceQQ     = "QQ"
 	OauthSourceQQMini = "QQMini"
 )
+
+var (
+	TokenSecret = []byte(conf.AppConf.Ext.TokenSecret)
+)
+

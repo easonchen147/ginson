@@ -15,6 +15,6 @@ func RegisterRoutes(server *gin.Engine) {
 	{
 		userRouter.BindRoutes(r.Group("/user"))
 		wxMiniRouter.BindRoutes(r.Group("/wx-mini"))
-		activityRouter.BindRoutes(r.Group("/activity"))
+		toolRouter.BindRoutes(r.Group("/tool"))
 	}
 }
