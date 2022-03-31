@@ -21,6 +21,6 @@ func (m *UserMongo) AddUserCache(ctx context.Context, user *model.User) error {
 	if err != nil {
 		return err
 	}
-	log.Info("add user result: %v", result.InsertedID)
+	log.Info(ctx, "add user result: %v", result.InsertedID)
 	return nil
 }
