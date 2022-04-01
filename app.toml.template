@@ -5,6 +5,7 @@ log_mode = "console"
 log_file = "logs/app.log"
 log_level = "debug"
 access_log_file = "logs/access.log"
+sql_log_file = "logs/sql.log"
 
 [dbs]
 

@@ -25,6 +25,7 @@ type AppConfig struct {
 	LogFile       string `toml:"log_file"`
 	LogLevel      string `toml:"log_level"`
 	AccessLogFile string `toml:"access_log_file"`
+	SqlLogFile    string `toml:"sql_log_file"`
 
 	DbsConfig          map[string]*dbConfig `toml:"dbs"`
 	MongoConfig        *mongoConfig         `toml:"mongo"`

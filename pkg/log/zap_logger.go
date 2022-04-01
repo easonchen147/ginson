@@ -3,10 +3,11 @@ package log
 import (
 	"context"
 	"fmt"
-	"ginson/pkg/constant"
 	"os"
 
 	"ginson/pkg/conf"
+	"ginson/pkg/constant"
+
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -15,6 +16,7 @@ import (
 var (
 	AccessLogger *zap.Logger
 	Logger       *zap.Logger
+	SqlLogger    *zap.Logger
 )
 
 // Init 配置日志模块
@@ -38,7 +40,7 @@ func Init(cfg *conf.AppConfig) {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
-	var core, accessCore zapcore.Core
+	var core, accessCore, sqlCore zapcore.Core
 	switch cfg.LogMode {
 	case "console":
 		core = zapcore.NewTee(zapcore.NewCore(
@@ -47,30 +49,27 @@ func Init(cfg *conf.AppConfig) {
 		accessCore = zapcore.NewTee(zapcore.NewCore(
 			zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(os.Stdout), level))
 	case "file":
-		writer := zapcore.AddSync(&lumberjack.Logger{
-			Filename:   cfg.LogFile,
-			MaxSize:    500, // megabytes
-			MaxBackups: 0,
-			MaxAge:     30, // days
-			LocalTime:  true,
-			Compress:   true,
-		})
-		core = zapcore.NewTee(zapcore.NewCore(
-			zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(writer), level))
-
-		accessLogWriter := zapcore.AddSync(&lumberjack.Logger{
-			Filename:   cfg.LogFile,
-			MaxSize:    500, // megabytes
-			MaxBackups: 0,
-			MaxAge:     30, // days
-			LocalTime:  true,
-			Compress:   true,
-		})
-		accessCore = zapcore.NewTee(zapcore.NewCore(
-			zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(accessLogWriter), level))
+		core = newLoggerCore(cfg.LogFile, core, encoderConfig, level)
+		accessCore = newLoggerCore(cfg.AccessLogFile, core, encoderConfig, level)
+		sqlCore = newLoggerCore(cfg.SqlLogFile, core, encoderConfig, level)
 	}
+
 	Logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 	AccessLogger = zap.New(accessCore, zap.AddCaller(), zap.AddCallerSkip(1))
+	SqlLogger = zap.New(sqlCore, zap.AddCaller(), zap.AddCallerSkip(1))
+}
+
+func newLoggerCore(logFilePath string, core zapcore.Core, encoderConfig zapcore.EncoderConfig, level zapcore.Level) zapcore.Core {
+	writer := zapcore.AddSync(&lumberjack.Logger{
+		Filename:   logFilePath,
+		MaxSize:    500, // megabytes
+		MaxBackups: 0,
+		MaxAge:     30, // days
+		LocalTime:  true,
+		Compress:   true,
+	})
+	return zapcore.NewTee(zapcore.NewCore(
+		zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(writer), level))
 }
 
 func Debug(ctx context.Context, msg string, val ...interface{}) {

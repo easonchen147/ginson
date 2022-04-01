@@ -8,7 +8,6 @@ import (
 
 type WxMiniController struct {
 	*Controller
-	// 放业务使用的service
 	wxMiniService *service.WxMiniService
 }
 

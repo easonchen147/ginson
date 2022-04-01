@@ -1,16 +1,16 @@
 package database
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"ginson/pkg/conf"
 	"ginson/pkg/log"
+	"gorm.io/gorm/schema"
+	"moul.io/zapgorm2"
 	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var (
@@ -47,15 +47,19 @@ func InitDB(cfg *conf.AppConfig) error {
 }
 
 func openConn(url string, idle, open int) (*gorm.DB, error) {
-	newLogger := logger.New(Writer{}, logger.Config{
-		SlowThreshold:             200 * time.Millisecond,
-		LogLevel:                  logger.Info,
-		IgnoreRecordNotFoundError: true,
-		Colorful:                  true})
-	openDB, err := gorm.Open(mysql.New(mysql.Config{DSN: url}), &gorm.Config{Logger: newLogger})
+	newLogger := zapgorm2.New(log.SqlLogger)
+	newLogger.SetAsDefault()
+	openDB, err := gorm.Open(mysql.New(mysql.Config{DSN: url}), &gorm.Config{
+		Logger:         newLogger,
+		NamingStrategy: schema.NamingStrategy{SingularTable: true},
+		NowFunc: func() time.Time {
+			return time.Now().Local()
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
+
 	db, err := openDB.DB()
 	if err != nil {
 		return nil, err
@@ -63,11 +67,4 @@ func openConn(url string, idle, open int) (*gorm.DB, error) {
 	db.SetMaxIdleConns(idle)
 	db.SetMaxOpenConns(open)
 	return openDB, nil
-}
-
-// Writer 记录SQL日志
-type Writer struct{}
-
-func (w Writer) Printf(format string, args ...interface{}) {
-	log.Debug(context.Background(), fmt.Sprintf(format, args...))
 }

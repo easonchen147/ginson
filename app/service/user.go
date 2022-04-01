@@ -101,6 +101,11 @@ func (u *UserService) GetUserToken(ctx context.Context, req *model.CreateUserTok
 		}
 	}
 
+	if user == nil {
+		log.Error(ctx, "user is nil")
+		return nil, code.ServerErr
+	}
+
 	token, err := u.createToken(ctx, user.ID)
 	if err != nil {
 		log.Error(ctx, "create user token failed. error: %v", err)
@@ -133,7 +138,7 @@ func (u *UserService) createUser(ctx context.Context, req *model.CreateUserToken
 		return nil, err
 	}
 
-	return u.db.FindByOpenIdAndSource(ctx, req.OpenId, req.Source)
+	return user, nil
 }
 
 // 创建token
