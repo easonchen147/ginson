@@ -10,6 +10,7 @@ import (
 	"ginson/pkg/code"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
+	"ginson/pkg/utils"
 	"github.com/go-redis/redis/v8"
 	"math/rand"
 	"time"
@@ -40,9 +41,21 @@ func (u *UserService) GetUserInfo(ctx context.Context, userId uint) (*model.User
 		if err != nil {
 			return nil, code.BizError(err)
 		}
-		_ = u.cache.SetUser(ctx, user)
+
+		cpyCtx := utils.CopyCtx(ctx)
+		_ = utils.GoInPool(func() {
+			_ = u.cache.SetUser(cpyCtx, user)
+		})
 	}
 	return user, nil
+}
+
+func (u *UserService) UpdateUserInfo(ctx context.Context, userInfo *model.UserInfo) code.BizErr {
+	err := u.db.UpdateUserById(ctx, userInfo)
+	if err != nil {
+		return code.BizError(err)
+	}
+	return nil
 }
 
 func (u *UserService) queryUserInfoFromDb(ctx context.Context, userId uint) (*model.UserInfo, error) {
@@ -56,7 +69,7 @@ func (u *UserService) queryUserInfoFromDb(ctx context.Context, userId uint) (*mo
 
 	result := &model.UserInfo{
 		UserId:   user.ID,
-		NickName: user.NickName,
+		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
 		Age:      user.Age,
 		Gender:   user.Gender,
@@ -78,8 +91,8 @@ func (u *UserService) GetUserToken(ctx context.Context, req *model.CreateUserTok
 
 	// 不存在则创建
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		if req.NickName == "" {
-			req.NickName = u.randomNickName(ctx)
+		if req.Nickname == "" {
+			req.Nickname = u.randomNickName(ctx)
 		}
 		user, err = u.createUser(ctx, req)
 		if err != nil {
@@ -95,7 +108,7 @@ func (u *UserService) GetUserToken(ctx context.Context, req *model.CreateUserTok
 	}
 
 	resp := &model.UserTokenResp{
-		NickName: user.NickName,
+		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
 		Token:    token,
 	}
@@ -110,7 +123,7 @@ func (u *UserService) createUser(ctx context.Context, req *model.CreateUserToken
 	user := &model.User{
 		OpenId:   req.OpenId,
 		Source:   req.Source,
-		NickName: req.NickName,
+		Nickname: req.Nickname,
 		Avatar:   req.Avatar,
 		Age:      req.Age,
 		Gender:   req.Gender,

@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"hash"
 	"io"
-	"strings"
 	"time"
 
 	"ginson/pkg/constant"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
 func MD5(str []byte) string {
@@ -70,11 +70,6 @@ func GetUuidV4() string {
 	return ""
 }
 
-// GetUuidV4Simple 返回uuid v4 不带-
-func GetUuidV4Simple() string {
-	return strings.ReplaceAll(GetUuidV4(), "-", "")
-}
-
 // ParseDate 转时间格式 yyyy-MM-dd
 func ParseDate(date string) time.Time {
 	result, err := time.ParseInLocation(constant.DateFormat, date, time.Local)
@@ -106,4 +101,25 @@ func FormatDateTime(dateTime time.Time) string {
 // CopyGinCtx 复制ginCtx
 func CopyGinCtx(ctx *gin.Context) context.Context {
 	return ctx.Copy()
+}
+
+// CopyCtx 拷贝Context，判断如果是ginCtx则需要拷贝
+func CopyCtx(ctx context.Context) context.Context {
+	switch ctx.(type) {
+	case *gin.Context:
+		return ctx.(*gin.Context).Copy()
+	default:
+		return ctx
+	}
+}
+
+const nanoIdAlphbet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+// GetNanoId 获取32位的nanoId
+func GetNanoId() string {
+	id, err := gonanoid.Generate(nanoIdAlphbet, 32)
+	if err != nil {
+		return ""
+	}
+	return id
 }

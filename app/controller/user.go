@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"ginson/app/model"
 	"ginson/app/service"
 	"github.com/gin-gonic/gin"
 )
@@ -49,5 +50,29 @@ func (u *UserController) GetUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	u.Success(ctx, resp)
+	u.SuccessData(ctx, resp)
+}
+
+func (u *UserController) UpdateUserInfo(ctx *gin.Context) {
+	userId, err := u.GetUserIdFromCtx(ctx)
+	if err != nil {
+		u.FailedWithBindErr(ctx, err)
+		return
+	}
+
+	var updateUserInfo *model.UserInfo
+	err = ctx.ShouldBindJSON(&updateUserInfo)
+	if err != nil {
+		u.FailedWithBindErr(ctx, err)
+		return
+	}
+	updateUserInfo.UserId = userId
+
+	bizErr := u.userService.UpdateUserInfo(ctx, updateUserInfo)
+	if bizErr != nil {
+		u.FailedWithBizErr(ctx, bizErr)
+		return
+	}
+
+	u.Success(ctx)
 }

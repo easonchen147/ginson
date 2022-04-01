@@ -34,5 +34,5 @@ func (c *WxMiniController) WxMiniLogin(ctx *gin.Context) {
 		c.FailedWithBizErr(ctx, bizErr)
 		return
 	}
-	c.Success(ctx, resp)
+	c.SuccessData(ctx, resp)
 }

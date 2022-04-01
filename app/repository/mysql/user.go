@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"ginson/app/model"
+	"gorm.io/gorm"
 )
 
 type UserDb struct {
@@ -35,4 +36,17 @@ func (q *UserDb) FindByOpenIdAndSource(ctx context.Context, openId, source strin
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (q *UserDb) UpdateUserById(ctx context.Context, user *model.UserInfo) error {
+	return q.db().Model(&model.User{
+		Model: gorm.Model{
+			ID: user.UserId,
+		},
+	}).Updates(map[string]interface{}{
+		"nickname": user.Nickname,
+		"avatar":   user.Avatar,
+		"age":      user.Age,
+		"gender":   user.Gender,
+	}).Error
 }

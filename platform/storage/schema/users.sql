@@ -10,7 +10,7 @@ CREATE TABLE `users`
     `id`         int(10) unsigned NOT NULL AUTO_INCREMENT,
     `open_id`    varchar(50)             NOT NULL COMMENT '第三方平台Id',
     `source`     varchar(50)             NOT NULL COMMENT '注册来源',
-    `nick_name`  varchar(100)            NOT NULL comment '昵称',
+    `nickname`   varchar(100)            NOT NULL comment '昵称',
     `avatar`     varchar(200) DEFAULT '' NOT NULL COMMENT '头像',
     `age`        int          DEFAULT 0  NOT NULL COMMENT '年龄',
     `gender`     int          DEFAULT 0  NOT NULL COMMENT '性别0-未知，1-男，2-女',

@@ -8,6 +8,6 @@ import (
 
 func Trace() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set(constant.TraceIdKey, utils.GetUuidV4Simple())
+		c.Set(constant.TraceIdKey, utils.GetNanoId())
 	}
 }

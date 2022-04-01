@@ -99,7 +99,7 @@ func (b *BaseOauthHandler) getState(state string) string {
 	if state != "" {
 		return state
 	}
-	return utils.GetUuidV4()
+	return utils.GetNanoId()
 }
 
 // GetGenderByInt 微信、微信小程序的性别都是int，一样的值，不需要转换

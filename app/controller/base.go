@@ -16,7 +16,11 @@ func (*Controller) Index(ctx *gin.Context) {
 	ctx.String(http.StatusOK, "Welcome to ginson")
 }
 
-func (*Controller) Success(ctx *gin.Context, data interface{}) {
+func (*Controller) Success(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, resp.NewResponseSuccess(nil))
+}
+
+func (*Controller) SuccessData(ctx *gin.Context, data interface{}) {
 	ctx.JSON(http.StatusOK, resp.NewResponseSuccess(data))
 }
 
