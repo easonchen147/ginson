@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"ginson/app/service/tool"
-	"ginson/app/service/user"
-	"ginson/app/service/wxmini"
+	"ginson/app/tool"
+	"ginson/app/user"
+	"ginson/app/wxmini"
 	"ginson/pkg/api"
 	"github.com/gin-gonic/gin"
 )

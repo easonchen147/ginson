@@ -2,7 +2,7 @@ package wxmini
 
 import (
 	"context"
-	"ginson/app/service/user"
+	"ginson/app/user"
 	"ginson/conf"
 	"ginson/pkg/code"
 	"ginson/pkg/constant"
