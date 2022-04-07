@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"ginson/pkg/conf"
+	"ginson/conf"
 	"ginson/pkg/constant"
 
 	"github.com/natefinch/lumberjack"

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"ginson/pkg/code"
-	"ginson/pkg/conf"
+	"ginson/conf"
 	"ginson/pkg/log"
 	"ginson/pkg/middleware"
 	"ginson/pkg/router"

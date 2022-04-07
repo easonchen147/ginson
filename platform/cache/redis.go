@@ -2,7 +2,7 @@ package cache
 
 import (
 	"errors"
-	"ginson/pkg/conf"
+	"ginson/conf"
 	"github.com/go-redis/redis/v8"
 )
 

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"context"
-	"ginson/pkg/conf"
+	"ginson/conf"
 	"github.com/go-resty/resty/v2"
 	"time"
 )

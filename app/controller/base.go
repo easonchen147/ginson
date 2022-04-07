@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"ginson/app/model/resp"
 	"ginson/pkg/code"
+	"ginson/pkg/resp"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

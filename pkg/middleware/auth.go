@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"context"
-	"ginson/app/model/resp"
 	"ginson/pkg/code"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
+	"ginson/pkg/resp"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"

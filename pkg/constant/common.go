@@ -1,6 +1,6 @@
 package constant
 
-import "ginson/pkg/conf"
+import "ginson/conf"
 
 const (
 	TraceIdKey = "TraceId"

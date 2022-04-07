@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"errors"
-	"ginson/pkg/conf"
+	"ginson/conf"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"

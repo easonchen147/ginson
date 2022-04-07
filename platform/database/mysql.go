@@ -3,7 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
-	"ginson/pkg/conf"
+	"ginson/conf"
 	"ginson/pkg/log"
 	"gorm.io/gorm/schema"
 	"moul.io/zapgorm2"

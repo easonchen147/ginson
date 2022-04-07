@@ -2,6 +2,7 @@ package resp
 
 import "ginson/pkg/code"
 
+// CommonResp api响应统一定义
 type CommonResp struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`

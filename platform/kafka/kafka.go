@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"errors"
-	"ginson/pkg/conf"
+	"ginson/conf"
 
 	"github.com/segmentio/kafka-go"
 )

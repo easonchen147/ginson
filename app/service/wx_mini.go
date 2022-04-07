@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"ginson/app/model"
+	"ginson/conf"
 	"ginson/pkg/code"
-	"ginson/pkg/conf"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
 	"ginson/pkg/oauth"
