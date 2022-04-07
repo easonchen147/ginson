@@ -1,4 +1,4 @@
-package model
+package wxmini
 
 type WxMiniLoginReq struct {
 	Code string `json:"code" binding:"required"`

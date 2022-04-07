@@ -10,7 +10,9 @@ import (
 
 type BaseCache struct{}
 
-var baseCache = &BaseCache{}
+func NewBaseCache() *BaseCache {
+	return &BaseCache{}
+}
 
 func (b *BaseCache) redis() *redis.Client {
 	return cache.Redis()

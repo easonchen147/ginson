@@ -1,6 +1,7 @@
-package controller
+package tool
 
 import (
+	"ginson/pkg/api"
 	"ginson/pkg/log"
 	"github.com/chromedp/chromedp"
 	"github.com/chromedp/chromedp/device"
@@ -10,19 +11,18 @@ import (
 	"net/url"
 )
 
-type ToolController struct {
-	*Controller
+type Handler struct {
+	*api.Handler
 }
 
-var toolController = &ToolController{
-	Controller: BaseController,
+
+func NewHandler() *Handler {
+	return &Handler{
+		Handler: api.NewBaseHandler(),
+	}
 }
 
-func GetToolController() *ToolController {
-	return toolController
-}
-
-func (c *ToolController) GetQrCode(ctx *gin.Context) {
+func (c *Handler) GetQrCode(ctx *gin.Context) {
 	data := ctx.Query("data")
 
 	q, err := qrcode.New(data, qrcode.Medium)
@@ -42,7 +42,7 @@ func (c *ToolController) GetQrCode(ctx *gin.Context) {
 	}
 }
 
-func (c *ToolController) GetScreenShot(ctx *gin.Context) {
+func (c *Handler) GetScreenShot(ctx *gin.Context) {
 	query := ctx.Query("url")
 
 	chromedp.WithLogf(func(s string, i ...interface{}) {
@@ -67,7 +67,7 @@ func (c *ToolController) GetScreenShot(ctx *gin.Context) {
 	_, _ = ctx.Writer.Write(buf)
 }
 
-func (c *ToolController) fullScreenshot(url string, quality int, res *[]byte) chromedp.Tasks {
+func (c *Handler) fullScreenshot(url string, quality int, res *[]byte) chromedp.Tasks {
 	return chromedp.Tasks{
 		chromedp.Emulate(device.IPhoneXR),
 		chromedp.Navigate(url),

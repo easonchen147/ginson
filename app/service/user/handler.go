@@ -1,29 +1,26 @@
-package controller
+package user
 
 import (
 	"context"
 	"errors"
-	"ginson/app/model"
-	"ginson/app/service"
+	"ginson/pkg/api"
 	"github.com/gin-gonic/gin"
 )
 
-type UserController struct {
-	*Controller
+type Handler struct {
+	*api.Handler
 	// 放业务使用的service
-	userService *service.UserService
+	service *Service
 }
 
-var userController = &UserController{
-	Controller:  BaseController,
-	userService: service.GetUserService(),
+func NewHandler() *Handler {
+	return &Handler{
+		Handler: api.NewBaseHandler(),
+		service: NewService(),
+	}
 }
 
-func GetUserController() *UserController {
-	return userController
-}
-
-func (u *UserController) GetUserIdFromCtx(ctx context.Context) (uint, error) {
+func (u *Handler) GetUserIdFromCtx(ctx context.Context) (uint, error) {
 	userId := ctx.Value("userId")
 	if userId == nil {
 		return 0, errors.New("userId is nil")
@@ -37,14 +34,14 @@ func (u *UserController) GetUserIdFromCtx(ctx context.Context) (uint, error) {
 	return userIdInt, nil
 }
 
-func (u *UserController) GetUserInfo(ctx *gin.Context) {
+func (u *Handler) GetUserInfo(ctx *gin.Context) {
 	userId, err := u.GetUserIdFromCtx(ctx)
 	if err != nil {
 		u.FailedWithBindErr(ctx, err)
 		return
 	}
 
-	resp, bizErr := u.userService.GetUserInfo(ctx, userId)
+	resp, bizErr := u.service.GetUserInfo(ctx, userId)
 	if bizErr != nil {
 		u.FailedWithBizErr(ctx, bizErr)
 		return
@@ -53,14 +50,14 @@ func (u *UserController) GetUserInfo(ctx *gin.Context) {
 	u.SuccessData(ctx, resp)
 }
 
-func (u *UserController) UpdateUserInfo(ctx *gin.Context) {
+func (u *Handler) UpdateUserInfo(ctx *gin.Context) {
 	userId, err := u.GetUserIdFromCtx(ctx)
 	if err != nil {
 		u.FailedWithBindErr(ctx, err)
 		return
 	}
 
-	var updateUserInfo *model.UserInfo
+	var updateUserInfo *UserInfo
 	err = ctx.ShouldBindJSON(&updateUserInfo)
 	if err != nil {
 		u.FailedWithBindErr(ctx, err)
@@ -68,7 +65,7 @@ func (u *UserController) UpdateUserInfo(ctx *gin.Context) {
 	}
 	updateUserInfo.UserId = userId
 
-	bizErr := u.userService.UpdateUserInfo(ctx, updateUserInfo)
+	bizErr := u.service.UpdateUserInfo(ctx, updateUserInfo)
 	if bizErr != nil {
 		u.FailedWithBizErr(ctx, bizErr)
 		return

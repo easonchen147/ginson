@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"ginson/pkg/code"
 	"ginson/conf"
+	"ginson/pkg/code"
 	"ginson/pkg/log"
 	"ginson/pkg/middleware"
-	"ginson/pkg/router"
 	"ginson/platform/cache"
 	"ginson/platform/database"
 	"ginson/platform/kafka"
+	"ginson/routes"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -81,8 +81,8 @@ func initialize(cfg *conf.AppConfig) error {
 // startServer 启动服务
 func startServer(cfg *conf.AppConfig) error {
 	server := &http.Server{
-		Addr:           cfg.HttpAddr + ":" + strconv.Itoa(cfg.HttpPort),
-		Handler:        initEngine(cfg),
+		Addr:    cfg.HttpAddr + ":" + strconv.Itoa(cfg.HttpPort),
+		Handler: initEngine(cfg),
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	go listenToSystemSignals(cancel)
@@ -120,7 +120,7 @@ func initEngine(cfg *conf.AppConfig) *gin.Engine {
 		c.AbortWithStatusJSON(http.StatusOK, code.ServerErr)
 	}))
 
-	router.RegisterRoutes(engine)
+	routes.RegisterRoutes(engine)
 
 	return engine
 }

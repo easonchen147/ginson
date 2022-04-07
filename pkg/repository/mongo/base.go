@@ -6,8 +6,10 @@ import (
 
 type BaseMongo struct{}
 
-var baseMongo = &BaseMongo{}
+func NewBaseMongo() *BaseMongo {
+	return &BaseMongo{}
+}
 
-func (b *BaseMongo) mg() *database.MongoInstance {
+func (b *BaseMongo) Mgo() *database.MongoInstance {
 	return database.Mongo()
 }

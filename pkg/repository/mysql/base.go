@@ -7,8 +7,10 @@ import (
 
 type BaseDb struct{}
 
-var baseDb = &BaseDb{}
+func NewBaseDb() *BaseDb {
+	return &BaseDb{}
+}
 
-func (b *BaseDb) db(dbName ...string) *gorm.DB {
+func (b *BaseDb) Db(dbName ...string) *gorm.DB {
 	return database.DB(dbName...)
 }

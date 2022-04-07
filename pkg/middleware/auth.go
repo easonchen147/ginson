@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"context"
+	"ginson/pkg/api"
 	"ginson/pkg/code"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
-	"ginson/pkg/resp"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -16,14 +16,14 @@ func TokenMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.GetHeader("Authorization")
 		if token == "" {
-			ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedBizErr(code.TokenEmptyErr))
+			ctx.AbortWithStatusJSON(http.StatusOK, api.NewResponseFailedBizErr(code.TokenEmptyErr))
 			return
 		}
 
 		userId, err := parseToken(ctx, token)
 		if err != nil || userId == 0 {
 			log.Error(ctx, "parse token failed, error: %v", err)
-			ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedBizErr(err))
+			ctx.AbortWithStatusJSON(http.StatusOK, api.NewResponseFailedBizErr(err))
 			return
 		}
 

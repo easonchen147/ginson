@@ -1,4 +1,4 @@
-package resp
+package api
 
 import "ginson/pkg/code"
 

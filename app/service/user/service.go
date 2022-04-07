@@ -1,12 +1,9 @@
-package service
+package user
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"ginson/app/model"
-	"ginson/app/repository/cache"
-	"ginson/app/repository/mysql"
 	"ginson/pkg/code"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
@@ -19,18 +16,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserService struct {
-	db    *mysql.UserDb
-	cache *cache.UserCache
+type Service struct {
+	db    *Db
+	cache *Cache
 }
 
-var userService = &UserService{db: mysql.GetUserDb(), cache: cache.GetUserCache()}
-
-func GetUserService() *UserService {
-	return userService
+func NewService() *Service {
+	return &Service{db: NewDb(), cache: NewCache()}
 }
 
-func (u *UserService) GetUserInfo(ctx context.Context, userId uint) (*model.UserInfo, code.BizErr) {
+func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*UserInfo, code.BizErr) {
 	user, err := u.cache.GetUser(ctx, userId)
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, code.BizError(err)
@@ -50,7 +45,7 @@ func (u *UserService) GetUserInfo(ctx context.Context, userId uint) (*model.User
 	return user, nil
 }
 
-func (u *UserService) UpdateUserInfo(ctx context.Context, userInfo *model.UserInfo) code.BizErr {
+func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *UserInfo) code.BizErr {
 	err := u.db.UpdateUserById(ctx, userInfo)
 	if err != nil {
 		return code.BizError(err)
@@ -58,7 +53,7 @@ func (u *UserService) UpdateUserInfo(ctx context.Context, userInfo *model.UserIn
 	return nil
 }
 
-func (u *UserService) queryUserInfoFromDb(ctx context.Context, userId uint) (*model.UserInfo, error) {
+func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*UserInfo, error) {
 	user, err := u.db.GetUserById(ctx, userId)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
@@ -67,7 +62,7 @@ func (u *UserService) queryUserInfoFromDb(ctx context.Context, userId uint) (*mo
 		return nil, err
 	}
 
-	result := &model.UserInfo{
+	result := &UserInfo{
 		UserId:   user.ID,
 		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
@@ -77,12 +72,12 @@ func (u *UserService) queryUserInfoFromDb(ctx context.Context, userId uint) (*mo
 	return result, nil
 }
 
-func (u *UserService) GetUserToken(ctx context.Context, req *model.CreateUserTokenReq) (*model.UserTokenResp, code.BizErr) {
+func (u *Service) GetUserToken(ctx context.Context, req *CreateUserTokenReq) (*UserTokenResp, code.BizErr) {
 	if req.OpenId == "" {
 		return nil, code.OpenIdInvalidErr
 	}
 
-	var user *model.User
+	var user *User
 	user, err := u.db.FindByOpenIdAndSource(ctx, req.OpenId, req.Source)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Error(ctx, "find by openId and source failed. error: %v", err)
@@ -112,7 +107,7 @@ func (u *UserService) GetUserToken(ctx context.Context, req *model.CreateUserTok
 		return nil, code.LoginFailedErr
 	}
 
-	resp := &model.UserTokenResp{
+	resp := &UserTokenResp{
 		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
 		Token:    token,
@@ -120,12 +115,12 @@ func (u *UserService) GetUserToken(ctx context.Context, req *model.CreateUserTok
 	return resp, nil
 }
 
-func (u *UserService) randomNickName(ctx context.Context) string {
+func (u *Service) randomNickName(ctx context.Context) string {
 	return fmt.Sprintf("用户%06d", rand.Intn(1000000))
 }
 
-func (u *UserService) createUser(ctx context.Context, req *model.CreateUserTokenReq) (*model.User, error) {
-	user := &model.User{
+func (u *Service) createUser(ctx context.Context, req *CreateUserTokenReq) (*User, error) {
+	user := &User{
 		OpenId:   req.OpenId,
 		Source:   req.Source,
 		Nickname: req.Nickname,
@@ -142,7 +137,7 @@ func (u *UserService) createUser(ctx context.Context, req *model.CreateUserToken
 }
 
 // 创建token
-func (u *UserService) createToken(ctx context.Context, userId uint) (string, error) {
+func (u *Service) createToken(ctx context.Context, userId uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": userId,
 		"exp":    time.Now().Add(time.Hour * 24).Unix(),
