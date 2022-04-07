@@ -9,7 +9,7 @@ import (
 )
 
 func RegisterRoutes(server *gin.Engine) {
-	server.GET("/", api.NewBaseHandler().Index)
+	server.GET("/", api.NewHandler().Index)
 
 	r := server.Group("/api")
 	{

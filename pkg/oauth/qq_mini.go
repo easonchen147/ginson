@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"ginson/pkg/utils"
+	"ginson/pkg/util"
 )
 
 type QQMiniOauthHandler struct {
@@ -48,7 +48,7 @@ func NewQQMiniOauthHandler(appId, appSecret string) *QQMiniOauthHandler {
 func (w *QQMiniOauthHandler) CodeToSessionKey(ctx context.Context, code string) (*QQMiniSessionKey, error) {
 	url := w.buildCodeToSessionKeyUrl(code)
 	result := &QQMiniSessionKey{}
-	err := utils.Get(ctx, url, &result)
+	err := util.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (w *QQMiniOauthHandler) CodeToSessionKey(ctx context.Context, code string) 
 }
 
 func (w *QQMiniOauthHandler) buildCodeToSessionKeyUrl(code string) string {
-	url := utils.NewUrlHelper(qqMiniOauthCode2TokenUrl).
+	url := util.NewUrlHelper(qqMiniOauthCode2TokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("appid", w.appId).
 		AddParam("secret", w.appSecret).

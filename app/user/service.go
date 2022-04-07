@@ -7,7 +7,7 @@ import (
 	"ginson/pkg/code"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
-	"ginson/pkg/utils"
+	"ginson/pkg/util"
 	"github.com/go-redis/redis/v8"
 	"math/rand"
 	"time"
@@ -17,12 +17,12 @@ import (
 )
 
 type Service struct {
-	db    *Db
+	query *Query
 	cache *Cache
 }
 
 func NewService() *Service {
-	return &Service{db: NewDb(), cache: NewCache()}
+	return &Service{query: NewQuery(), cache: NewCache()}
 }
 
 func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*UserInfo, code.BizErr) {
@@ -37,8 +37,8 @@ func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*UserInfo, code
 			return nil, code.BizError(err)
 		}
 
-		cpyCtx := utils.CopyCtx(ctx)
-		_ = utils.GoInPool(func() {
+		cpyCtx := util.CopyCtx(ctx)
+		_ = util.GoInPool(func() {
 			_ = u.cache.SetUser(cpyCtx, user)
 		})
 	}
@@ -46,7 +46,7 @@ func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*UserInfo, code
 }
 
 func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *UserInfo) code.BizErr {
-	err := u.db.UpdateUserById(ctx, userInfo)
+	err := u.query.UpdateUserById(ctx, userInfo)
 	if err != nil {
 		return code.BizError(err)
 	}
@@ -54,7 +54,7 @@ func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *UserInfo) code.B
 }
 
 func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*UserInfo, error) {
-	user, err := u.db.GetUserById(ctx, userId)
+	user, err := u.query.GetUserById(ctx, userId)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
@@ -78,7 +78,7 @@ func (u *Service) GetUserToken(ctx context.Context, req *CreateUserTokenReq) (*U
 	}
 
 	var user *User
-	user, err := u.db.FindByOpenIdAndSource(ctx, req.OpenId, req.Source)
+	user, err := u.query.FindByOpenIdAndSource(ctx, req.OpenId, req.Source)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Error(ctx, "find by openId and source failed. error: %v", err)
 		return nil, code.LoginFailedErr
@@ -128,7 +128,7 @@ func (u *Service) createUser(ctx context.Context, req *CreateUserTokenReq) (*Use
 		Age:      req.Age,
 		Gender:   req.Gender,
 	}
-	err := u.db.CreateUser(ctx, user)
+	err := u.query.CreateUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}

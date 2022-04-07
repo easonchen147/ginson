@@ -13,7 +13,7 @@ type Handler struct {
 
 func NewHandler() *Handler {
 	return &Handler{
-		Handler: api.NewBaseHandler(),
+		Handler: api.NewHandler(),
 		service: NewService(),
 	}
 }

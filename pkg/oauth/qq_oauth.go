@@ -3,7 +3,7 @@ package oauth
 import (
 	"context"
 	"fmt"
-	"ginson/pkg/utils"
+	"ginson/pkg/util"
 )
 
 type QQOauthHandler struct {
@@ -57,7 +57,7 @@ func NewQQOauthHandler(appId, appSecret, redirectUrl string) *QQOauthHandler {
 
 // GetRedirectUrl 获取授权重定向地址，state可以使用唯一凭证， forMobile = true 表示移动端授权，不传则默认为 PC
 func (q *QQOauthHandler) GetRedirectUrl(state string, forMobile bool) (string, error) {
-	url := utils.NewUrlHelper(qqOauthAuthorizeUrl).
+	url := util.NewUrlHelper(qqOauthAuthorizeUrl).
 		AddParam("response_type", responseTypeCode).
 		AddParam("client_id", q.appId).
 		AddParam("redirect_uri", q.redirectUrl).
@@ -72,7 +72,7 @@ func (q *QQOauthHandler) GetRedirectUrl(state string, forMobile bool) (string, e
 func (q *QQOauthHandler) GetAccessToken(ctx context.Context, code string) (*QQOauthToken, error) {
 	url := q.buildAccessTokenUrl(code)
 	result := &QQOauthToken{}
-	err := utils.Get(ctx, url, &result)
+	err := util.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (q *QQOauthHandler) GetAccessToken(ctx context.Context, code string) (*QQOa
 }
 
 func (q *QQOauthHandler) buildAccessTokenUrl(code string) string {
-	url := utils.NewUrlHelper(qqOauthAccessTokenUrl).
+	url := util.NewUrlHelper(qqOauthAccessTokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("code", code).
 		AddParam("client_id", q.appId).
@@ -100,7 +100,7 @@ func (q *QQOauthHandler) buildAccessTokenUrl(code string) string {
 func (q *QQOauthHandler) GetOpenid(ctx context.Context, accessToken string) (*QQOauthMe, error) {
 	url := q.buildOpenidUrl(accessToken)
 	result := &QQOauthMe{}
-	err := utils.Get(ctx, url, &result)
+	err := util.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func (q *QQOauthHandler) GetOpenid(ctx context.Context, accessToken string) (*QQ
 }
 
 func (q *QQOauthHandler) buildOpenidUrl(accessToken string) string {
-	url := utils.NewUrlHelper(qqOauthMeUrl).
+	url := util.NewUrlHelper(qqOauthMeUrl).
 		AddParam("access_token", accessToken).
 		AddParam("fmt", "json").
 		Build()
@@ -124,7 +124,7 @@ func (q *QQOauthHandler) buildOpenidUrl(accessToken string) string {
 func (q *QQOauthHandler) GetUserInfo(ctx context.Context, openid, accessToken string) (*QQOauthUserInfo, error) {
 	url := q.buildUserInfoUrl(openid, accessToken)
 	result := &QQOauthUserInfo{}
-	err := utils.Get(ctx, url, &result)
+	err := util.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +137,7 @@ func (q *QQOauthHandler) GetUserInfo(ctx context.Context, openid, accessToken st
 }
 
 func (q *QQOauthHandler) buildUserInfoUrl(openid string, accessToken string) string {
-	url := utils.NewUrlHelper(qqOauthUserInfoUrl).
+	url := util.NewUrlHelper(qqOauthUserInfoUrl).
 		AddParam("access_token", accessToken).
 		AddParam("oauth_consumer_key", q.appId).
 		AddParam("openid", openid).

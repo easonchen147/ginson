@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"ginson/pkg/utils"
+	"ginson/pkg/util"
 )
 
 type WxMiniOauthHandler struct {
@@ -70,7 +70,7 @@ func NewWxMiniOauthHandler(appId, appSecret string) *WxMiniOauthHandler {
 func (w *WxMiniOauthHandler) CodeToSessionKey(ctx context.Context, code string) (*WxMiniSessionKey, error) {
 	url := w.buildCodeToSessionKeyUrl(code)
 	result := &WxMiniSessionKey{}
-	err := utils.Get(ctx, url, &result)
+	err := util.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (w *WxMiniOauthHandler) CodeToSessionKey(ctx context.Context, code string) 
 }
 
 func (w *WxMiniOauthHandler) buildCodeToSessionKeyUrl(code string) string {
-	url := utils.NewUrlHelper(wxMiniOauthCode2TokenUrl).
+	url := util.NewUrlHelper(wxMiniOauthCode2TokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("appid", w.appId).
 		AddParam("secret", w.appSecret).
@@ -119,7 +119,7 @@ func (w *WxMiniOauthHandler) GetUserPhone(ctx context.Context, code, accessToken
 	url := w.buildUserPhoneUrl(accessToken)
 	req := &WxMiniOauthGetPhoneInfoReq{Code: code}
 	result := &WxMiniOauthUserPhone{}
-	err := utils.Post(ctx, url, req, &result)
+	err := util.Post(ctx, url, req, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func (w *WxMiniOauthHandler) GetUserPhone(ctx context.Context, code, accessToken
 }
 
 func (w *WxMiniOauthHandler) buildUserPhoneUrl(accessToken string) string {
-	url := utils.NewUrlHelper(wxMiniOauthGetPhoneUrl).
+	url := util.NewUrlHelper(wxMiniOauthGetPhoneUrl).
 		AddParam("access_token", accessToken).
 		Build()
 	return url
@@ -142,7 +142,7 @@ func (w *WxMiniOauthHandler) buildUserPhoneUrl(accessToken string) string {
 func (w *WxMiniOauthHandler) GetAccessToken(ctx context.Context) (*WxMiniOauthToken, error) {
 	url := w.buildAccessTokenUrl()
 	result := &WxMiniOauthToken{}
-	err := utils.Get(ctx, url, &result)
+	err := util.Get(ctx, url, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ func (w *WxMiniOauthHandler) GetAccessToken(ctx context.Context) (*WxMiniOauthTo
 }
 
 func (w *WxMiniOauthHandler) buildAccessTokenUrl() string {
-	url := utils.NewUrlHelper(wxMiniOauthAccessTokenUrl).
+	url := util.NewUrlHelper(wxMiniOauthAccessTokenUrl).
 		AddParam("grant_type", grantTypeClientCredential).
 		AddParam("appid", w.appId).
 		AddParam("secret", w.appSecret).

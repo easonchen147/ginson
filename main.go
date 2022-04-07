@@ -8,7 +8,6 @@ import (
 	"ginson/pkg/code"
 	"ginson/pkg/log"
 	"ginson/pkg/middleware"
-	"ginson/platform/cache"
 	"ginson/platform/database"
 	"ginson/platform/kafka"
 	"ginson/routes"
@@ -52,13 +51,13 @@ func initialize(cfg *conf.AppConfig) error {
 	}
 
 	// 初始化Redis
-	err = cache.InitRedis(cfg)
+	err = database.InitRedis(cfg)
 	if err != nil {
 		return fmt.Errorf("init redis failed, error: %s", err)
 	}
 
 	// 初始化Redis Cluster
-	err = cache.InitRedisCluster(cfg)
+	err = database.InitRedisCluster(cfg)
 	if err != nil {
 		return fmt.Errorf("init redis cluster failed, error: %s", err)
 	}
@@ -152,7 +151,7 @@ func shutdown(server *http.Server) {
 	}()
 
 	// 资源释放
-	cache.Close()
+	database.Close()
 	kafka.Close()
 
 	// 关闭server

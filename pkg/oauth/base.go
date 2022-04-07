@@ -4,7 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
-	"ginson/pkg/utils"
+	"ginson/pkg/util"
 )
 
 const (
@@ -99,7 +99,7 @@ func (b *BaseOauthHandler) getState(state string) string {
 	if state != "" {
 		return state
 	}
-	return utils.GetNanoId()
+	return util.GetNanoId()
 }
 
 // GetGenderByInt 微信、微信小程序的性别都是int，一样的值，不需要转换

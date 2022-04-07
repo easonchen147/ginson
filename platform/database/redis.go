@@ -1,4 +1,4 @@
-package cache
+package database
 
 import (
 	"errors"

@@ -3,16 +3,18 @@ package user
 import (
 	"context"
 	"fmt"
-	"ginson/pkg/repository/cache"
+	"ginson/pkg/util"
+	"ginson/platform/database"
+	"github.com/go-redis/redis/v8"
 	"time"
 )
 
 type Cache struct {
-	*cache.BaseCache
+	client *redis.Client
 }
 
 func NewCache() *Cache {
-	return &Cache{BaseCache: cache.NewBaseCache()}
+	return &Cache{client: database.Redis()}
 }
 
 func (c *Cache) getUserIdKey(userId uint) string {
@@ -20,9 +22,9 @@ func (c *Cache) getUserIdKey(userId uint) string {
 }
 
 func (c *Cache) SetUser(ctx context.Context, user *UserInfo) error {
-	return setJson(ctx, c.getUserIdKey(user.UserId), user, time.Hour)
+	return util.SetJsonCache(ctx, c.client, c.getUserIdKey(user.UserId), user, time.Hour)
 }
 
 func (c *Cache) GetUser(ctx context.Context, userId uint) (*UserInfo, error) {
-	return getByJson[model.UserInfo](ctx, c.getUserIdKey(userId))
+	return util.GetByJsonCache[UserInfo](ctx, c.client, c.getUserIdKey(userId))
 }
