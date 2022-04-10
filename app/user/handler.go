@@ -3,24 +3,25 @@ package user
 import (
 	"context"
 	"errors"
-	"ginson/pkg/api"
+	"ginson/pkg/resp"
+
 	"github.com/gin-gonic/gin"
 )
 
-type Handler struct {
-	*api.Handler
+type handler struct {
+	*resp.Handler
 	// 放业务使用的service
 	service *Service
 }
 
-func NewHandler() *Handler {
-	return &Handler{
-		Handler: api.NewHandler(),
+func newHandler() *handler {
+	return &handler{
+		Handler: resp.NewHandler(),
 		service: NewService(),
 	}
 }
 
-func (u *Handler) GetUserIdFromCtx(ctx context.Context) (uint, error) {
+func (u *handler) GetUserIdFromCtx(ctx context.Context) (uint, error) {
 	userId := ctx.Value("userId")
 	if userId == nil {
 		return 0, errors.New("userId is nil")
@@ -34,30 +35,30 @@ func (u *Handler) GetUserIdFromCtx(ctx context.Context) (uint, error) {
 	return userIdInt, nil
 }
 
-func (u *Handler) GetUserInfo(ctx *gin.Context) {
+func (u *handler) GetUserInfo(ctx *gin.Context) {
 	userId, err := u.GetUserIdFromCtx(ctx)
 	if err != nil {
 		u.FailedWithBindErr(ctx, err)
 		return
 	}
 
-	resp, bizErr := u.service.GetUserInfo(ctx, userId)
+	result, bizErr := u.service.GetUserInfo(ctx, userId)
 	if bizErr != nil {
 		u.FailedWithBizErr(ctx, bizErr)
 		return
 	}
 
-	u.SuccessData(ctx, resp)
+	u.SuccessData(ctx, result)
 }
 
-func (u *Handler) UpdateUserInfo(ctx *gin.Context) {
+func (u *handler) UpdateUserInfo(ctx *gin.Context) {
 	userId, err := u.GetUserIdFromCtx(ctx)
 	if err != nil {
 		u.FailedWithBindErr(ctx, err)
 		return
 	}
 
-	var updateUserInfo *UserInfo
+	var updateUserInfo *Info
 	err = ctx.ShouldBindJSON(&updateUserInfo)
 	if err != nil {
 		u.FailedWithBindErr(ctx, err)

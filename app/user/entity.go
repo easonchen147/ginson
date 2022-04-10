@@ -14,7 +14,15 @@ type User struct {
 	Gender   int // 0=unknown 1=male 2=female
 }
 
-type CreateUserTokenReq struct {
+type Info struct {
+	UserId   uint   `json:"userId"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+	Age      int    `json:"age"`
+	Gender   int    `json:"gender"`
+}
+
+type CreateTokenReq struct {
 	OpenId   string `json:"openId" binding:"required"`
 	Source   string `json:"source" binding:"required"`
 	Nickname string `json:"nickname"`
@@ -23,16 +31,8 @@ type CreateUserTokenReq struct {
 	Gender   int    `json:"gender"`
 }
 
-type UserTokenResp struct {
+type TokenResp struct {
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
 	Token    string `json:"token"`
-}
-
-type UserInfo struct {
-	UserId   uint   `json:"userId"`
-	Nickname string `json:"nickname"`
-	Avatar   string `json:"avatar"`
-	Age      int    `json:"age"`
-	Gender   int    `json:"gender"`
 }

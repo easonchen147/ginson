@@ -27,10 +27,10 @@ const (
 // 微信登录授权
 const (
 	wechatOauthQrCodeLoginUrl  = "https://open.weixin.qq.com/connect/qrconnect" // 扫码登录，一般用在PC端
-	wechatOauthAccessTokenUrl  = "https://api.weixin.qq.com/sns/oauth2/access_token"
-	wechatOauthRefreshTokenUrl = "https://api.weixin.qq.com/sns/oauth2/refresh_token"
-	wechatOauthCheckTokenUrl   = "https://api.weixin.qq.com/sns/auth"
-	wechatOauthUserInfoUrl     = "https://api.weixin.qq.com/sns/userinfo"
+	wechatOauthAccessTokenUrl  = "https://resp.weixin.qq.com/sns/oauth2/access_token"
+	wechatOauthRefreshTokenUrl = "https://resp.weixin.qq.com/sns/oauth2/refresh_token"
+	wechatOauthCheckTokenUrl   = "https://resp.weixin.qq.com/sns/auth"
+	wechatOauthUserInfoUrl     = "https://resp.weixin.qq.com/sns/userinfo"
 
 	wechatOauthScopeLogin = "snsapi_login" // 网页应用使用这个，也就是qrcode扫码登录使用
 
@@ -45,9 +45,9 @@ const (
 
 // 微信小程序登录授权
 const (
-	wxMiniOauthAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token"
-	wxMiniOauthCode2TokenUrl  = "https://api.weixin.qq.com/sns/jscode2session"
-	wxMiniOauthGetPhoneUrl    = "https://api.weixin.qq.com/wxa/business/getuserphonenumber"
+	wxMiniOauthAccessTokenUrl = "https://resp.weixin.qq.com/cgi-bin/token"
+	wxMiniOauthCode2TokenUrl  = "https://resp.weixin.qq.com/sns/jscode2session"
+	wxMiniOauthGetPhoneUrl    = "https://resp.weixin.qq.com/wxa/business/getuserphonenumber"
 )
 
 // qq授权
@@ -60,7 +60,7 @@ const (
 
 // QQ小程序登录授权
 const (
-	qqMiniOauthCode2TokenUrl = "https://api.q.qq.com/sns/jscode2session"
+	qqMiniOauthCode2TokenUrl = "https://resp.q.qq.com/sns/jscode2session"
 )
 
 type WatermarkInfo struct {

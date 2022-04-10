@@ -19,7 +19,7 @@ func NewService() *Service {
 	return &Service{wxMiniOauthHandler: oauth.NewWxMiniOauthHandler(conf.AppConf.Ext.WxMiniAppId, conf.AppConf.Ext.WxMiniAppSecret), userService: user.NewService()}
 }
 
-func (w *Service) WxMiniLogin(ctx context.Context, req *WxMiniLoginReq) (*user.UserTokenResp, code.BizErr) {
+func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenResp, code.BizErr) {
 	sessionInfo, err := w.wxMiniOauthHandler.CodeToSessionKey(ctx, req.Code)
 	if err != nil {
 		log.Error(ctx, "code to session key failed, error: %v", err)
@@ -43,7 +43,7 @@ func (w *Service) WxMiniLogin(ctx context.Context, req *WxMiniLoginReq) (*user.U
 		gender = userInfo.Gender
 	}
 
-	return w.userService.GetUserToken(ctx, &user.CreateUserTokenReq{
+	return w.userService.GetUserToken(ctx, &user.CreateTokenReq{
 		OpenId:   sessionInfo.Openid,
 		Source:   constant.OauthSourceWxMini,
 		Nickname: nickName,

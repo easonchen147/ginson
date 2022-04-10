@@ -5,6 +5,6 @@ import (
 )
 
 func BindWxMiniRoutes(group *gin.RouterGroup) {
-	wxMini := NewHandler()
+	wxMini := newHandler()
 	group.POST("/login", wxMini.WxMiniLogin)
 }

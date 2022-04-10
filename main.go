@@ -11,13 +11,16 @@ import (
 	"ginson/platform/database"
 	"ginson/platform/kafka"
 	"ginson/routes"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/gin-contrib/pprof"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -111,6 +114,13 @@ func initEngine(cfg *conf.AppConfig) *gin.Engine {
 	}())
 
 	engine := gin.New()
+
+	// 性能监控中间件
+	// to look at the heap profile: go tool ip:port/dev/pprof/heap
+	// to look at a 30-second CPU profile: go tool ip:port/dev/pprof/profile
+	// to look at the goroutine blocking profile: go tool ip:port/dev/pprof/block
+	// to collect a 5-second execution trace: wget ip:port/debug/pprof/trace?seconds=5
+	pprof.Register(engine, "dev/pprof")
 
 	engine.Use(middleware.Trace())
 	engine.Use(middleware.Logger())

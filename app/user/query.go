@@ -3,22 +3,23 @@ package user
 import (
 	"context"
 	"ginson/platform/database"
+
 	"gorm.io/gorm"
 )
 
-type Query struct {
+type query struct {
 	db *gorm.DB
 }
 
-func NewQuery() *Query {
-	return &Query{db: database.DB()}
+func newQuery() *query {
+	return &query{db: database.DB()}
 }
 
-func (q *Query) CreateUser(ctx context.Context, user *User) error {
+func (q *query) CreateUser(ctx context.Context, user *User) error {
 	return q.db.Create(user).Error
 }
 
-func (q *Query) GetUserById(ctx context.Context, userId uint) (*User, error) {
+func (q *query) GetUserById(ctx context.Context, userId uint) (*User, error) {
 	var user User
 	err := q.db.First(&user, userId).Error
 	if err != nil {
@@ -27,7 +28,7 @@ func (q *Query) GetUserById(ctx context.Context, userId uint) (*User, error) {
 	return &user, nil
 }
 
-func (q *Query) FindByOpenIdAndSource(ctx context.Context, openId, source string) (*User, error) {
+func (q *query) FindByOpenIdAndSource(ctx context.Context, openId, source string) (*User, error) {
 	var user User
 	err := q.db.Where("open_id = ? and source = ? ", openId, source).First(&user).Error
 	if err != nil {
@@ -36,7 +37,7 @@ func (q *Query) FindByOpenIdAndSource(ctx context.Context, openId, source string
 	return &user, nil
 }
 
-func (q *Query) UpdateUserById(ctx context.Context, user *UserInfo) error {
+func (q *query) UpdateUserById(ctx context.Context, user *Info) error {
 	return q.db.Model(&User{
 		Model: gorm.Model{
 			ID: user.UserId,

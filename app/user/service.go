@@ -8,24 +8,25 @@ import (
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
 	"ginson/pkg/util"
-	"github.com/go-redis/redis/v8"
 	"math/rand"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 
 	"github.com/dgrijalva/jwt-go"
 	"gorm.io/gorm"
 )
 
 type Service struct {
-	query *Query
-	cache *Cache
+	query *query
+	cache *cache
 }
 
 func NewService() *Service {
-	return &Service{query: NewQuery(), cache: NewCache()}
+	return &Service{query: newQuery(), cache: newCache()}
 }
 
-func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*UserInfo, code.BizErr) {
+func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*Info, code.BizErr) {
 	user, err := u.cache.GetUser(ctx, userId)
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, code.BizError(err)
@@ -45,7 +46,7 @@ func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*UserInfo, code
 	return user, nil
 }
 
-func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *UserInfo) code.BizErr {
+func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *Info) code.BizErr {
 	err := u.query.UpdateUserById(ctx, userInfo)
 	if err != nil {
 		return code.BizError(err)
@@ -53,7 +54,7 @@ func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *UserInfo) code.B
 	return nil
 }
 
-func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*UserInfo, error) {
+func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*Info, error) {
 	user, err := u.query.GetUserById(ctx, userId)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
@@ -62,7 +63,7 @@ func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*UserIn
 		return nil, err
 	}
 
-	result := &UserInfo{
+	result := &Info{
 		UserId:   user.ID,
 		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
@@ -72,7 +73,7 @@ func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*UserIn
 	return result, nil
 }
 
-func (u *Service) GetUserToken(ctx context.Context, req *CreateUserTokenReq) (*UserTokenResp, code.BizErr) {
+func (u *Service) GetUserToken(ctx context.Context, req *CreateTokenReq) (*TokenResp, code.BizErr) {
 	if req.OpenId == "" {
 		return nil, code.OpenIdInvalidErr
 	}
@@ -107,7 +108,7 @@ func (u *Service) GetUserToken(ctx context.Context, req *CreateUserTokenReq) (*U
 		return nil, code.LoginFailedErr
 	}
 
-	resp := &UserTokenResp{
+	resp := &TokenResp{
 		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
 		Token:    token,
@@ -119,7 +120,7 @@ func (u *Service) randomNickName(ctx context.Context) string {
 	return fmt.Sprintf("用户%06d", rand.Intn(1000000))
 }
 
-func (u *Service) createUser(ctx context.Context, req *CreateUserTokenReq) (*User, error) {
+func (u *Service) createUser(ctx context.Context, req *CreateTokenReq) (*User, error) {
 	user := &User{
 		OpenId:   req.OpenId,
 		Source:   req.Source,

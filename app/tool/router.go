@@ -5,7 +5,7 @@ import (
 )
 
 func BindToolRoutes(group *gin.RouterGroup) {
-	handler := NewHandler()
+	handler := newHandler()
 	group.GET("/get-qr-code", handler.GetQrCode)
 	group.GET("/get-screenshot", handler.GetScreenShot)
 }

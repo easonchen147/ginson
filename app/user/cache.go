@@ -5,26 +5,27 @@ import (
 	"fmt"
 	"ginson/pkg/util"
 	"ginson/platform/database"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
-type Cache struct {
+type cache struct {
 	client *redis.Client
 }
 
-func NewCache() *Cache {
-	return &Cache{client: database.Redis()}
+func newCache() *cache {
+	return &cache{client: database.Redis()}
 }
 
-func (c *Cache) getUserIdKey(userId uint) string {
+func (c *cache) getUserIdKey(userId uint) string {
 	return fmt.Sprintf("userId:%d", userId)
 }
 
-func (c *Cache) SetUser(ctx context.Context, user *UserInfo) error {
+func (c *cache) SetUser(ctx context.Context, user *Info) error {
 	return util.SetJsonCache(ctx, c.client, c.getUserIdKey(user.UserId), user, time.Hour)
 }
 
-func (c *Cache) GetUser(ctx context.Context, userId uint) (*UserInfo, error) {
-	return util.GetByJsonCache[UserInfo](ctx, c.client, c.getUserIdKey(userId))
+func (c *cache) GetUser(ctx context.Context, userId uint) (*Info, error) {
+	return util.GetByJsonCache[Info](ctx, c.client, c.getUserIdKey(userId))
 }
