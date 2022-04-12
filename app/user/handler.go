@@ -42,9 +42,10 @@ func (u *handler) GetUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	result, bizErr := u.service.GetUserInfo(ctx, userId)
-	if bizErr != nil {
-		u.FailedWithBizErr(ctx, bizErr)
+	var result *Info
+	result, err = u.service.GetUserInfo(ctx, userId)
+	if err != nil {
+		u.FailedWithErr(ctx, err)
 		return
 	}
 
@@ -54,7 +55,7 @@ func (u *handler) GetUserInfo(ctx *gin.Context) {
 func (u *handler) UpdateUserInfo(ctx *gin.Context) {
 	userId, err := u.GetUserIdFromCtx(ctx)
 	if err != nil {
-		u.FailedWithBindErr(ctx, err)
+		u.FailedWithErr(ctx, err)
 		return
 	}
 
@@ -66,9 +67,9 @@ func (u *handler) UpdateUserInfo(ctx *gin.Context) {
 	}
 	updateUserInfo.UserId = userId
 
-	bizErr := u.service.UpdateUserInfo(ctx, updateUserInfo)
-	if bizErr != nil {
-		u.FailedWithBizErr(ctx, bizErr)
+	err = u.service.UpdateUserInfo(ctx, updateUserInfo)
+	if err != nil {
+		u.FailedWithErr(ctx, err)
 		return
 	}
 

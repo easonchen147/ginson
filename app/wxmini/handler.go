@@ -1,6 +1,7 @@
 package wxmini
 
 import (
+	"ginson/app/user"
 	"ginson/pkg/resp"
 
 	"github.com/gin-gonic/gin"
@@ -27,9 +28,10 @@ func (c *handler) WxMiniLogin(ctx *gin.Context) {
 		return
 	}
 
-	result, bizErr := c.service.WxMiniLogin(ctx, req)
-	if bizErr != nil {
-		c.FailedWithBizErr(ctx, bizErr)
+	var result *user.TokenResp
+	result, err = c.service.WxMiniLogin(ctx, req)
+	if err != nil {
+		c.FailedWithErr(ctx, err)
 		return
 	}
 	c.SuccessData(ctx, result)

@@ -126,7 +126,7 @@ func initEngine(cfg *conf.AppConfig) *gin.Engine {
 	engine.Use(middleware.Logger())
 	engine.Use(gin.CustomRecovery(func(c *gin.Context, err interface{}) {
 		log.Error(c, "panic recovery: %v", err)
-		c.AbortWithStatusJSON(http.StatusOK, code.ServerErr)
+		c.AbortWithStatusJSON(http.StatusOK, code.ServerError)
 	}))
 
 	routes.RegisterRoutes(engine)

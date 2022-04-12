@@ -46,15 +46,17 @@ func BizError(err error) BizErr {
 
 // 系统常用error
 var (
-	FailedErr = BizErrorWithCode(Failed)
-	ParamErr  = BizErrorWithCode(ParamInvalid)
-	ServerErr = BizErrorWithCode(ServerError)
+	FailedError = BizErrorWithCode(Failed)
+	ParamError  = BizErrorWithCode(ParamInvalid)
+	ServerError = BizErrorWithCode(ServerFailed)
+	MysqlError  = BizErrorWithCode(MysqlFailed)
+	RedisError  = BizErrorWithCode(RedisFailed)
 )
 
 // 定义模块功能错误
 var (
-	LoginFailedErr   = BizErrorWithCode(LoginFailed)
-	TokenInvalidErr  = BizErrorWithCode(TokenInvalid)
-	TokenEmptyErr    = BizErrorWithCode(TokenEmpty)
-	OpenIdInvalidErr = BizErrorWithCode(OpenIdInvalid)
+	LoginFailedError   = BizErrorWithCode(LoginFailed)
+	TokenInvalidError  = BizErrorWithCode(TokenInvalid)
+	TokenEmptyError    = BizErrorWithCode(TokenEmpty)
+	OpenIdInvalidError = BizErrorWithCode(OpenIdInvalid)
 )

@@ -19,8 +19,8 @@ func NewResponseSuccess(data interface{}) *CommonResponse {
 
 func NewResponseFailed() *CommonResponse {
 	return &CommonResponse{
-		Code: code.FailedErr.Code(),
-		Msg:  code.FailedErr.Msg(),
+		Code: code.FailedError.Code(),
+		Msg:  code.FailedError.Msg(),
 		Data: nil,
 	}
 }

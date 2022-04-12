@@ -41,10 +41,10 @@ func (*Handler) FailedWithCodeMsg(ctx *gin.Context, code int, msg string) {
 	ctx.AbortWithStatusJSON(http.StatusOK, NewResponseFailedCodeMsg(code, msg))
 }
 
-func (*Handler) FailedWithBizErr(ctx *gin.Context, bizErr code.BizErr) {
-	ctx.AbortWithStatusJSON(http.StatusOK, NewResponseFailedBizErr(bizErr))
-}
-
 func (*Handler) FailedWithErr(ctx *gin.Context, err error) {
+	if bizErr, ok := err.(code.BizErr); ok {
+		ctx.AbortWithStatusJSON(http.StatusOK, NewResponseFailedBizErr(bizErr))
+		return
+	}
 	ctx.AbortWithStatusJSON(http.StatusOK, NewResponseFailedErr(err))
 }

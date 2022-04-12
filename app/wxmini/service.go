@@ -4,7 +4,6 @@ import (
 	"context"
 	"ginson/app/user"
 	"ginson/conf"
-	"ginson/pkg/code"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
 	"ginson/pkg/oauth"
@@ -19,11 +18,11 @@ func NewService() *Service {
 	return &Service{wxMiniOauthHandler: oauth.NewWxMiniOauthHandler(conf.AppConf.Ext.WxMiniAppId, conf.AppConf.Ext.WxMiniAppSecret), userService: user.NewService()}
 }
 
-func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenResp, code.BizErr) {
+func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenResp, error) {
 	sessionInfo, err := w.wxMiniOauthHandler.CodeToSessionKey(ctx, req.Code)
 	if err != nil {
 		log.Error(ctx, "code to session key failed, error: %v", err)
-		return nil, code.BizError(err)
+		return nil, err
 	}
 
 	var userInfo *oauth.WxMiniOauthUserInfo
@@ -31,7 +30,7 @@ func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenRe
 		userInfo, err = w.wxMiniOauthHandler.GetUserInfo(sessionInfo.SessionKey, req.EncryptedData, req.Iv)
 		if err != nil {
 			log.Error(ctx, "code to session key failed, error: %v", err)
-			return nil, code.BizError(err)
+			return nil, err
 		}
 	}
 

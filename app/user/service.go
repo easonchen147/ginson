@@ -26,16 +26,16 @@ func NewService() *Service {
 	return &Service{query: newQuery(), cache: newCache()}
 }
 
-func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*Info, code.BizErr) {
+func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*Info, error) {
 	user, err := u.cache.GetUser(ctx, userId)
 	if err != nil && !errors.Is(err, redis.Nil) {
-		return nil, code.BizError(err)
+		return nil, code.RedisError
 	}
 
 	if errors.Is(err, redis.Nil) {
 		user, err = u.queryUserInfoFromDb(ctx, userId)
 		if err != nil {
-			return nil, code.BizError(err)
+			return nil, code.MysqlError
 		}
 
 		cpyCtx := util.CopyCtx(ctx)
@@ -46,10 +46,10 @@ func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*Info, code.Biz
 	return user, nil
 }
 
-func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *Info) code.BizErr {
+func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *Info) error {
 	err := u.query.UpdateUserById(ctx, userInfo)
 	if err != nil {
-		return code.BizError(err)
+		return err
 	}
 	return nil
 }
@@ -73,16 +73,16 @@ func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*Info, 
 	return result, nil
 }
 
-func (u *Service) GetUserToken(ctx context.Context, req *CreateTokenReq) (*TokenResp, code.BizErr) {
+func (u *Service) GetUserToken(ctx context.Context, req *CreateTokenReq) (*TokenResp, error) {
 	if req.OpenId == "" {
-		return nil, code.OpenIdInvalidErr
+		return nil, code.OpenIdInvalidError
 	}
 
 	var user *User
 	user, err := u.query.FindByOpenIdAndSource(ctx, req.OpenId, req.Source)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Error(ctx, "find by openId and source failed. error: %v", err)
-		return nil, code.LoginFailedErr
+		return nil, code.MysqlError
 	}
 
 	// 不存在则创建
@@ -93,19 +93,19 @@ func (u *Service) GetUserToken(ctx context.Context, req *CreateTokenReq) (*Token
 		user, err = u.createUser(ctx, req)
 		if err != nil {
 			log.Error(ctx, "create user failed. error: %v", err)
-			return nil, code.LoginFailedErr
+			return nil, code.MysqlError
 		}
 	}
 
 	if user == nil {
 		log.Error(ctx, "user is nil")
-		return nil, code.ServerErr
+		return nil, code.LoginFailedError
 	}
 
 	token, err := u.createToken(ctx, user.ID)
 	if err != nil {
 		log.Error(ctx, "create user token failed. error: %v", err)
-		return nil, code.LoginFailedErr
+		return nil, err
 	}
 
 	resp := &TokenResp{

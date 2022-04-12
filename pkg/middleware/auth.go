@@ -17,7 +17,7 @@ func TokenMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.GetHeader("Authorization")
 		if token == "" {
-			ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedBizErr(code.TokenEmptyErr))
+			ctx.AbortWithStatusJSON(http.StatusOK, resp.NewResponseFailedBizErr(code.TokenEmptyError))
 			return
 		}
 
@@ -38,17 +38,17 @@ func TokenMiddleware() gin.HandlerFunc {
 func parseToken(ctx context.Context, tokenString string) (uint, code.BizErr) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, code.TokenInvalidErr
+			return nil, code.TokenInvalidError
 		}
 		return constant.TokenSecret, nil
 	})
 	if err != nil {
-		return 0, code.TokenInvalidErr
+		return 0, code.TokenInvalidError
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return uint(claims["userId"].(float64)), nil
 	}
 
-	return 0, code.TokenInvalidErr
+	return 0, code.TokenInvalidError
 }
