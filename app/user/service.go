@@ -8,12 +8,11 @@ import (
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
 	"ginson/pkg/util"
+	"github.com/golang-jwt/jwt/v4"
 	"math/rand"
 	"time"
 
 	"github.com/go-redis/redis/v8"
-
-	"github.com/dgrijalva/jwt-go"
 	"gorm.io/gorm"
 )
 

@@ -6,10 +6,9 @@ import (
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
 	"ginson/pkg/resp"
-	"net/http"
-
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
+	"net/http"
 )
 
 // TokenMiddleware Token校验

@@ -5,11 +5,11 @@ go 1.18
 require (
 	github.com/BurntSushi/toml v0.4.1
 	github.com/chromedp/chromedp v0.7.8
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/google/uuid v1.3.0
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
