@@ -2,7 +2,7 @@ package database
 
 import (
 	"errors"
-	"ginson/conf"
+	"ginson/cfg"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -12,7 +12,7 @@ var (
 )
 
 // InitRedis 初始化redis
-func InitRedis(cfg *conf.AppConfig) error {
+func InitRedis(cfg *cfg.AppConfig) error {
 	if cfg.RedisConfig == nil {
 		return nil
 	}
@@ -34,7 +34,7 @@ func Redis() *redis.Client {
 }
 
 // InitRedisCluster 初始化redis cluster
-func InitRedisCluster(cfg *conf.AppConfig) error {
+func InitRedisCluster(cfg *cfg.AppConfig) error {
 	if cfg.RedisClusterConfig == nil {
 		return nil
 	}

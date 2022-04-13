@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"ginson/biz/user"
 	"ginson/pkg/resp"
 
 	"github.com/gin-gonic/gin"
@@ -11,13 +12,13 @@ import (
 type handler struct {
 	*resp.Handler
 	// 放业务使用的service
-	service *Service
+	service *user.Service
 }
 
 func newHandler() *handler {
 	return &handler{
 		Handler: resp.NewHandler(),
-		service: NewService(),
+		service: user.NewService(),
 	}
 }
 
@@ -42,7 +43,7 @@ func (u *handler) GetUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	var result *Info
+	var result *user.User
 	result, err = u.service.GetUserInfo(ctx, userId)
 	if err != nil {
 		u.FailedWithErr(ctx, err)
@@ -59,7 +60,7 @@ func (u *handler) UpdateUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	var updateUserInfo *Info
+	var updateUserInfo *user.User
 	err = ctx.ShouldBindJSON(&updateUserInfo)
 	if err != nil {
 		u.FailedWithBindErr(ctx, err)

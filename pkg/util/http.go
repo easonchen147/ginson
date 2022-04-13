@@ -2,7 +2,7 @@ package util
 
 import (
 	"context"
-	"ginson/conf"
+	"ginson/cfg"
 	"github.com/go-resty/resty/v2"
 	"time"
 )
@@ -12,7 +12,7 @@ var httpClient *resty.Client
 func init() {
 	httpClient = resty.New()
 	httpClient.SetTimeout(time.Second * 5)
-	httpClient.SetDebug(conf.AppConf.IsDevEnv())
+	httpClient.SetDebug(cfg.AppConf.IsDevEnv())
 }
 
 // GetHttpClient 获取http client 实例

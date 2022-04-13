@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"ginson/conf"
+	"ginson/api"
+	"ginson/cfg"
 	"ginson/pkg/code"
 	"ginson/pkg/log"
 	"ginson/pkg/middleware"
 	"ginson/platform/database"
 	"ginson/platform/kafka"
-	"ginson/routes"
 	"net/http"
 	"os"
 	"os/signal"
@@ -25,20 +25,20 @@ import (
 
 func main() {
 	// 初始化相关依赖组件
-	err := initialize(conf.AppConf)
+	err := initialize(cfg.AppConf)
 	if err != nil {
 		panic(fmt.Sprintf("initialize failed: %s", err))
 	}
 
 	// 启动Web服务
-	err = startServer(conf.AppConf)
+	err = startServer(cfg.AppConf)
 	if err != nil {
 		panic(fmt.Sprintf("Server started failed: %s", err))
 	}
 }
 
 // initialize 初始化组件依赖
-func initialize(cfg *conf.AppConfig) error {
+func initialize(cfg *cfg.AppConfig) error {
 	// 初始化日志
 	log.Init(cfg)
 
@@ -81,7 +81,7 @@ func initialize(cfg *conf.AppConfig) error {
 }
 
 // startServer 启动服务
-func startServer(cfg *conf.AppConfig) error {
+func startServer(cfg *cfg.AppConfig) error {
 	server := &http.Server{
 		Addr:    cfg.HttpAddr + ":" + strconv.Itoa(cfg.HttpPort),
 		Handler: initEngine(cfg),
@@ -105,7 +105,7 @@ func startServer(cfg *conf.AppConfig) error {
 }
 
 // 初始化gin路由
-func initEngine(cfg *conf.AppConfig) *gin.Engine {
+func initEngine(cfg *cfg.AppConfig) *gin.Engine {
 	gin.SetMode(func() string {
 		if cfg.IsDevEnv() {
 			return gin.DebugMode
@@ -129,7 +129,7 @@ func initEngine(cfg *conf.AppConfig) *gin.Engine {
 		c.AbortWithStatusJSON(http.StatusOK, code.ServerError)
 	}))
 
-	routes.RegisterRoutes(engine)
+	api.RegisterRoutes(engine)
 
 	return engine
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"ginson/biz/user/db"
 	"ginson/pkg/code"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
@@ -17,15 +18,15 @@ import (
 )
 
 type Service struct {
-	query *query
-	cache *cache
+	query *db.Query
+	cache *Cache
 }
 
 func NewService() *Service {
-	return &Service{query: newQuery(), cache: newCache()}
+	return &Service{query: db.NewQuery(), cache: NewCache()}
 }
 
-func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*Info, error) {
+func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*User, error) {
 	user, err := u.cache.GetUser(ctx, userId)
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, code.RedisError
@@ -45,15 +46,23 @@ func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*Info, error) {
 	return user, nil
 }
 
-func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *Info) error {
-	err := u.query.UpdateUserById(ctx, userInfo)
+func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *User) error {
+	err := u.query.UpdateUserById(ctx, &db.User{
+		Model: gorm.Model{
+			ID: userInfo.UserId,
+		},
+		Nickname: userInfo.Nickname,
+		Avatar:   userInfo.Avatar,
+		Age:      userInfo.Age,
+		Gender:   userInfo.Gender,
+	})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*Info, error) {
+func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*User, error) {
 	user, err := u.query.GetUserById(ctx, userId)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
@@ -62,7 +71,7 @@ func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*Info, 
 		return nil, err
 	}
 
-	result := &Info{
+	result := &User{
 		UserId:   user.ID,
 		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
@@ -77,7 +86,7 @@ func (u *Service) GetUserToken(ctx context.Context, req *CreateTokenReq) (*Token
 		return nil, code.OpenIdInvalidError
 	}
 
-	var user *User
+	var user *db.User
 	user, err := u.query.FindByOpenIdAndSource(ctx, req.OpenId, req.Source)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Error(ctx, "find by openId and source failed. error: %v", err)
@@ -119,8 +128,8 @@ func (u *Service) randomNickName(ctx context.Context) string {
 	return fmt.Sprintf("用户%06d", rand.Intn(1000000))
 }
 
-func (u *Service) createUser(ctx context.Context, req *CreateTokenReq) (*User, error) {
-	user := &User{
+func (u *Service) createUser(ctx context.Context, req *CreateTokenReq) (*db.User, error) {
+	user := &db.User{
 		OpenId:   req.OpenId,
 		Source:   req.Source,
 		Nickname: req.Nickname,

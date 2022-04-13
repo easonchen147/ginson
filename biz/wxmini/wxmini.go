@@ -2,8 +2,8 @@ package wxmini
 
 import (
 	"context"
-	"ginson/app/user"
-	"ginson/conf"
+	"ginson/biz/user"
+	"ginson/cfg"
 	"ginson/pkg/constant"
 	"ginson/pkg/log"
 	"ginson/pkg/oauth"
@@ -15,7 +15,7 @@ type Service struct {
 }
 
 func NewService() *Service {
-	return &Service{wxMiniOauthHandler: oauth.NewWxMiniOauthHandler(conf.AppConf.Ext.WxMiniAppId, conf.AppConf.Ext.WxMiniAppSecret), userService: user.NewService()}
+	return &Service{wxMiniOauthHandler: oauth.NewWxMiniOauthHandler(cfg.AppConf.Ext.WxMiniAppId, cfg.AppConf.Ext.WxMiniAppSecret), userService: user.NewService()}
 }
 
 func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenResp, error) {

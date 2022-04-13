@@ -1,7 +1,8 @@
 package wxmini
 
 import (
-	"ginson/app/user"
+	"ginson/biz/user"
+	"ginson/biz/wxmini"
 	"ginson/pkg/resp"
 
 	"github.com/gin-gonic/gin"
@@ -10,18 +11,18 @@ import (
 type handler struct {
 	*resp.Handler
 	// 放业务使用的service
-	service *Service
+	service *wxmini.Service
 }
 
 func newHandler() *handler {
 	return &handler{
 		Handler: resp.NewHandler(),
-		service: NewService(),
+		service: wxmini.NewService(),
 	}
 }
 
 func (c *handler) WxMiniLogin(ctx *gin.Context) {
-	var req *LoginReq
+	var req *wxmini.LoginReq
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
 		c.FailedWithBindErr(ctx, err)

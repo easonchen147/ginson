@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"errors"
-	"ginson/conf"
+	"ginson/cfg"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -12,7 +12,7 @@ var (
 	consumers map[string]*kafka.Reader
 )
 
-func InitProducer(cfg *conf.AppConfig) error {
+func InitProducer(cfg *cfg.AppConfig) error {
 	if cfg.KafkaConfig == nil {
 		return nil
 	}
@@ -27,7 +27,7 @@ func InitProducer(cfg *conf.AppConfig) error {
 	return nil
 }
 
-func InitConsumer(cfg *conf.AppConfig) error {
+func InitConsumer(cfg *cfg.AppConfig) error {
 	if cfg.KafkaConfig == nil {
 		return nil
 	}

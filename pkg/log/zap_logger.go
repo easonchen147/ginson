@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"ginson/conf"
+	"ginson/cfg"
 	"ginson/pkg/constant"
 
 	"github.com/natefinch/lumberjack"
@@ -20,7 +20,7 @@ var (
 )
 
 // Init 配置日志模块
-func Init(cfg *conf.AppConfig) {
+func Init(cfg *cfg.AppConfig) {
 	var level zapcore.Level
 	if level.UnmarshalText([]byte(cfg.LogLevel)) != nil {
 		level = zapcore.InfoLevel

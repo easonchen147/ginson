@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"errors"
-	"ginson/conf"
+	"ginson/cfg"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +20,7 @@ var (
 	mg *MongoInstance
 )
 
-func InitMongo(cfg *conf.AppConfig) error {
+func InitMongo(cfg *cfg.AppConfig) error {
 	if cfg.MongoConfig == nil {
 		return nil
 	}
@@ -39,7 +39,7 @@ func Mongo() *MongoInstance {
 	return mg
 }
 
-func connectMongo(cfg *conf.AppConfig) (*MongoInstance, error) {
+func connectMongo(cfg *cfg.AppConfig) (*MongoInstance, error) {
 	option := options.Client().ApplyURI(cfg.MongoConfig.Uri).
 		SetConnectTimeout(time.Duration(cfg.MongoConfig.ConnectTimeout) * time.Second).
 		SetMaxConnecting(cfg.MongoConfig.MaxOpenConn).

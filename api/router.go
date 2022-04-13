@@ -1,9 +1,9 @@
-package routes
+package api
 
 import (
-	"ginson/app/tool"
-	"ginson/app/user"
-	"ginson/app/wxmini"
+	"ginson/api/tool"
+	"ginson/api/user"
+	"ginson/api/wxmini"
 	"ginson/pkg/resp"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ import (
 func RegisterRoutes(server *gin.Engine) {
 	server.GET("/", resp.NewHandler().Index)
 
-	r := server.Group("/resp")
+	r := server.Group("/api")
 	{
 		user.BindUserRoutes(r.Group("/user"))
 		wxmini.BindWxMiniRoutes(r.Group("/wx-mini"))

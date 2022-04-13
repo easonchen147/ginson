@@ -3,7 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
-	"ginson/conf"
+	"ginson/cfg"
 	"ginson/pkg/log"
 	"gorm.io/gorm/schema"
 	"moul.io/zapgorm2"
@@ -31,7 +31,7 @@ func DB(dbName ...string) *gorm.DB {
 }
 
 // InitDB 初始化数据库
-func InitDB(cfg *conf.AppConfig) error {
+func InitDB(cfg *cfg.AppConfig) error {
 	conns = make(map[string]*gorm.DB)
 	for dbKey, dbConfig := range cfg.DbsConfig {
 		conn, err := openConn(dbConfig.Uri, dbConfig.MaxIdleConn, dbConfig.MaxOpenConn)
