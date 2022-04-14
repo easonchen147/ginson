@@ -4,7 +4,7 @@ import (
 	"context"
 	"ginson/biz/user"
 	"ginson/foundation/log"
-	"ginson/pkg/constant"
+	"ginson/pkg/conf"
 	"ginson/pkg/oauth"
 )
 
@@ -14,7 +14,7 @@ type Service struct {
 }
 
 func NewService() *Service {
-	return &Service{wxMiniOauthHandler: oauth.NewWxMiniOauthHandler("", ""), userService: user.NewService()}
+	return &Service{wxMiniOauthHandler: oauth.NewWxMiniOauthHandler(conf.ExtConf().WxMiniAppId, conf.ExtConf().WxMiniAppSecret), userService: user.NewService()}
 }
 
 func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenResp, error) {
@@ -43,7 +43,7 @@ func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenRe
 
 	return w.userService.GetUserToken(ctx, &user.CreateTokenReq{
 		OpenId:   sessionInfo.Openid,
-		Source:   constant.OauthSourceWxMini,
+		Source:   oauth.SourceWxMini,
 		Nickname: nickName,
 		Avatar:   avatar,
 		Gender:   w.wxMiniOauthHandler.GetGenderByInt(gender),

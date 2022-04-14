@@ -8,7 +8,7 @@ import (
 	"ginson/foundation/log"
 	"ginson/foundation/util"
 	"ginson/pkg/code"
-	"ginson/pkg/constant"
+	"ginson/pkg/conf"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v4"
 	"math/rand"
@@ -145,13 +145,15 @@ func (u *Service) createUser(ctx context.Context, req *CreateTokenReq) (*db.User
 	return user, nil
 }
 
+var tokenSecret = []byte(conf.ExtConf().TokenSecret)
+
 // 创建token
 func (u *Service) createToken(ctx context.Context, userId uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": userId,
 		"exp":    time.Now().Add(time.Hour * 24).Unix(),
 	})
-	tokenString, err := token.SignedString(constant.TokenSecret)
+	tokenString, err := token.SignedString(tokenSecret)
 	if err != nil {
 		return "", err
 	}

@@ -8,6 +8,13 @@ import (
 )
 
 const (
+	SourceWxMini = "WxMini"
+	SourceWechat = "Wechat"
+	SourceQQ     = "QQ"
+	SourceQQMini = "QQMini"
+)
+
+const (
 	// 授权类型
 	grantTypeAuthorizationCode = "authorization_code"
 	grantTypeRefreshToken      = "refresh_token"

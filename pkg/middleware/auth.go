@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"context"
-	"ginson/pkg/code"
-	"ginson/pkg/constant"
-	"ginson/pkg/resp"
 	"ginson/foundation/log"
+	"ginson/pkg/code"
+	"ginson/pkg/conf"
+	"ginson/pkg/resp"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"
@@ -33,13 +33,15 @@ func TokenMiddleware() gin.HandlerFunc {
 	}
 }
 
+var tokenSecret = []byte(conf.ExtConf().TokenSecret)
+
 // 解析token
 func parseToken(ctx context.Context, tokenString string) (uint, code.BizErr) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, code.TokenInvalidError
 		}
-		return constant.TokenSecret, nil
+		return tokenSecret, nil
 	})
 	if err != nil {
 		return 0, code.TokenInvalidError

@@ -2,6 +2,7 @@ package cfg
 
 import (
 	"fmt"
+	"github.com/mitchellh/mapstructure"
 	"os"
 
 	"github.com/BurntSushi/toml"
@@ -105,8 +106,8 @@ func InitConfig(file string) *AppConfig {
 	return AppConf
 }
 
-// Load 加载toml配置文件内容
-func (cfg *AppConfig) Load() error {
+// load 加载toml配置文件内容
+func (cfg *AppConfig) load() error {
 	if _, err := os.Stat(cfg.File); os.IsNotExist(err) {
 		return fmt.Errorf("config file %s not existed", cfg.File)
 	}
@@ -123,6 +124,10 @@ func (cfg *AppConfig) IsDevEnv() bool {
 	return cfg.Env == "dev"
 }
 
+func (cfg *AppConfig) LoadExtConfig(v interface{}) error {
+	return mapstructure.Decode(cfg.Ext, v)
+}
+
 func init() {
 	configFile := "app.toml"
 	if envFilePath := os.Getenv("CONFIG_FILE"); envFilePath != "" {
@@ -131,7 +136,7 @@ func init() {
 
 	// 加载配置
 	cfg := InitConfig(configFile)
-	err := cfg.Load()
+	err := cfg.load()
 	if err != nil {
 		panic(fmt.Sprintf("load config failed, file: %s, error: %s", configFile, err))
 	}
