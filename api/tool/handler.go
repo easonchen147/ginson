@@ -1,8 +1,8 @@
 package tool
 
 import (
-	"ginson/pkg/log"
 	"ginson/pkg/resp"
+	"ginson/foundation/log"
 	"image/color"
 	"net/url"
 

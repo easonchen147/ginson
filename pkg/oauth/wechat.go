@@ -3,7 +3,7 @@ package oauth
 import (
 	"context"
 	"fmt"
-	"ginson/pkg/util"
+	"ginson/foundation/util"
 )
 
 type WechatOauthHandler struct {
@@ -48,7 +48,7 @@ func NewWechatOauthHandler(appId, appSecret, redirectUrl string) *WechatOauthHan
 
 // GetQrCodeRedirectUrl 获取微信授权重定向地址进行扫码，state可以使用唯一凭证
 func (w *WechatOauthHandler) GetQrCodeRedirectUrl(state string) (string, error) {
-	url := util.NewUrlHelper(wechatOauthQrCodeLoginUrl).
+	url := NewUrlHelper(wechatOauthQrCodeLoginUrl).
 		AddParam("response_type", responseTypeCode).
 		AddParam("appid", w.appId).
 		AddParam("redirect_uri", w.redirectUrl).
@@ -60,7 +60,7 @@ func (w *WechatOauthHandler) GetQrCodeRedirectUrl(state string) (string, error) 
 
 // GetAuthorizeCodeUrl 微信内部H5登录获取code
 func (w *WechatOauthHandler) GetAuthorizeCodeUrl(ctx context.Context, state string) (string, error) {
-	url := util.NewUrlHelper(wechatOauthAuthorizeUrl).
+	url := NewUrlHelper(wechatOauthAuthorizeUrl).
 		AddParam("response_type", responseTypeCode).
 		AddParam("appid", w.appId).
 		AddParam("redirect_uri", w.redirectUrl).
@@ -87,7 +87,7 @@ func (w *WechatOauthHandler) GetAccessToken(ctx context.Context, code string) (*
 }
 
 func (w *WechatOauthHandler) buildAccessTokenUrl(code string) string {
-	url := util.NewUrlHelper(wechatOauthAccessTokenUrl).
+	url := NewUrlHelper(wechatOauthAccessTokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("code", code).
 		AddParam("appid", w.appId).
@@ -113,7 +113,7 @@ func (w *WechatOauthHandler) RefreshToken(ctx context.Context, refreshToken stri
 }
 
 func (w *WechatOauthHandler) buildRefreshTokenUrl(refreshToken string) string {
-	url := util.NewUrlHelper(wechatOauthRefreshTokenUrl).
+	url := NewUrlHelper(wechatOauthRefreshTokenUrl).
 		AddParam("grant_type", grantTypeRefreshToken).
 		AddParam("refresh_token", refreshToken).
 		AddParam("appid", w.appId).
@@ -138,7 +138,7 @@ func (w *WechatOauthHandler) CheckToken(ctx context.Context, accessToken, openId
 }
 
 func (w *WechatOauthHandler) buildCheckTokenUrl(accessToken string, openId string) string {
-	url := util.NewUrlHelper(wechatOauthCheckTokenUrl).
+	url := NewUrlHelper(wechatOauthCheckTokenUrl).
 		AddParam("access_token", accessToken).
 		AddParam("openid", openId).
 		Build()
@@ -162,7 +162,7 @@ func (w *WechatOauthHandler) GetUserInfo(ctx context.Context, openId, accessToke
 }
 
 func (w *WechatOauthHandler) buildUserInfoUrl(openId string, accessToken string) string {
-	url := util.NewUrlHelper(wechatOauthUserInfoUrl).
+	url := NewUrlHelper(wechatOauthUserInfoUrl).
 		AddParam("openid", openId).
 		AddParam("access_token", accessToken).
 		Build()

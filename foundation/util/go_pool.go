@@ -2,7 +2,7 @@ package util
 
 import (
 	"context"
-	"ginson/pkg/log"
+	"ginson/foundation/log"
 	"github.com/panjf2000/ants/v2"
 )
 

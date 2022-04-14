@@ -4,7 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
-	"ginson/pkg/util"
+	"ginson/foundation/util"
 )
 
 const (

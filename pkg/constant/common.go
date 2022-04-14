@@ -1,7 +1,5 @@
 package constant
 
-import "ginson/cfg"
-
 const (
 	TraceIdKey = "TraceId"
 )
@@ -19,6 +17,6 @@ const (
 )
 
 var (
-	TokenSecret = []byte(cfg.AppConf.Ext.TokenSecret)
+	TokenSecret = []byte("")
 )
 

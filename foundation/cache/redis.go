@@ -1,9 +1,10 @@
-package database
+package cache
 
 import (
 	"errors"
-	"ginson/cfg"
+	"ginson/foundation/cfg"
 	"github.com/go-redis/redis/v8"
+	"time"
 )
 
 var (
@@ -22,13 +23,16 @@ func InitRedis(cfg *cfg.AppConfig) error {
 		DB:           cfg.RedisConfig.Db,
 		MinIdleConns: cfg.RedisConfig.MinIdle,
 		PoolSize:     cfg.RedisConfig.PoolSize,
+		DialTimeout:  time.Second * time.Duration(cfg.RedisConfig.ConnectTimeout),
+		ReadTimeout:  time.Second * time.Duration(cfg.RedisConfig.ReadTimeout),
+		WriteTimeout: time.Second * time.Duration(cfg.RedisConfig.WriteTimeout),
 	})
 	return nil
 }
 
 func Redis() *redis.Client {
 	if client == nil {
-		panic(errors.New("redis is not ready"))
+		panic(errors.New("cache is not ready"))
 	}
 	return client
 }
@@ -43,13 +47,16 @@ func InitRedisCluster(cfg *cfg.AppConfig) error {
 		Password:     cfg.RedisClusterConfig.Pass,
 		MinIdleConns: cfg.RedisClusterConfig.MinIdle,
 		PoolSize:     cfg.RedisClusterConfig.PoolSize,
+		DialTimeout:  time.Second * time.Duration(cfg.RedisConfig.ConnectTimeout),
+		ReadTimeout:  time.Second * time.Duration(cfg.RedisConfig.ReadTimeout),
+		WriteTimeout: time.Second * time.Duration(cfg.RedisConfig.WriteTimeout),
 	})
 	return nil
 }
 
 func RedisCluster() *redis.ClusterClient {
 	if clusterClient == nil {
-		panic(errors.New("redis cluster is not ready"))
+		panic(errors.New("foundation cluster is not ready"))
 	}
 	return clusterClient
 }

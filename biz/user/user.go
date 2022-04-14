@@ -5,15 +5,15 @@ import (
 	"errors"
 	"fmt"
 	"ginson/biz/user/db"
+	"ginson/foundation/log"
+	"ginson/foundation/util"
 	"ginson/pkg/code"
 	"ginson/pkg/constant"
-	"ginson/pkg/log"
-	"ginson/pkg/util"
+	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v4"
 	"math/rand"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
 )
 

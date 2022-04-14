@@ -1,9 +1,9 @@
-package database
+package mongo
 
 import (
 	"context"
 	"errors"
-	"ginson/cfg"
+	"ginson/foundation/cfg"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"

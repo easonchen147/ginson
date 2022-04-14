@@ -3,8 +3,8 @@ package user
 import (
 	"context"
 	"fmt"
+	"ginson/foundation/cache"
 	"ginson/pkg/util"
-	"ginson/platform/database"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -15,7 +15,7 @@ type Cache struct {
 }
 
 func NewCache() *Cache {
-	return &Cache{client: database.Redis()}
+	return &Cache{client: cache.Redis()}
 }
 
 func (c *Cache) getUserIdKey(userId uint) string {

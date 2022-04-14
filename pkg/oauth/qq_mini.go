@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"ginson/pkg/util"
+	"ginson/foundation/util"
 )
 
 type QQMiniOauthHandler struct {
@@ -61,7 +61,7 @@ func (w *QQMiniOauthHandler) CodeToSessionKey(ctx context.Context, code string) 
 }
 
 func (w *QQMiniOauthHandler) buildCodeToSessionKeyUrl(code string) string {
-	url := util.NewUrlHelper(qqMiniOauthCode2TokenUrl).
+	url := NewUrlHelper(qqMiniOauthCode2TokenUrl).
 		AddParam("grant_type", grantTypeAuthorizationCode).
 		AddParam("appid", w.appId).
 		AddParam("secret", w.appSecret).

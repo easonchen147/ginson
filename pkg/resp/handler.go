@@ -14,7 +14,7 @@ func NewHandler() *Handler {
 }
 
 func (*Handler) Index(ctx *gin.Context) {
-	ctx.String(http.StatusOK, "Welcome to ginson")
+	ctx.String(http.StatusOK, "Welcome")
 }
 
 func (*Handler) Success(ctx *gin.Context) {

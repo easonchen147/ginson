@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"ginson/foundation/util"
 	"ginson/pkg/constant"
-	"ginson/pkg/util"
 	"github.com/gin-gonic/gin"
 )
 

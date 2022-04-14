@@ -3,9 +3,9 @@ package log
 import (
 	"context"
 	"fmt"
+	"ginson/foundation/cfg"
 	"os"
 
-	"ginson/cfg"
 	"ginson/pkg/constant"
 
 	"github.com/natefinch/lumberjack"

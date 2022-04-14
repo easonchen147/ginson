@@ -33,28 +33,36 @@ type AppConfig struct {
 	RedisClusterConfig *redisClusterConfig  `toml:"redis_cluster"`
 	KafkaConfig        *kafkaConfig         `toml:"kafka"`
 
-	Ext extConfig `toml:"ext"`
+	Ext map[string]interface{} `toml:"ext"`
 }
 
 type dbConfig struct {
-	Uri         string `toml:"uri"`
-	MaxIdleConn int    `toml:"max_idle_conn"`
-	MaxOpenConn int    `toml:"max_open_conn"`
+	Uri             string `toml:"uri"`
+	MaxIdleConn     int    `toml:"max_idle_conn"`
+	MaxOpenConn     int    `toml:"max_open_conn"`
+	ConnectIdleTime int    `toml:"connect_idle_time"` //second default 300s
+	ConnectLifeTime int    `toml:"connect_life_time"` //second default 600s
 }
 
 type redisConfig struct {
-	Addr     string `toml:"addr"`
-	Pass     string `toml:"pass"`
-	Db       int    `toml:"db"`
-	MinIdle  int    `toml:"min_idle"`
-	PoolSize int    `toml:"pool_size"`
+	Addr           string `toml:"addr"`
+	Pass           string `toml:"pass"`
+	Db             int    `toml:"db"`
+	MinIdle        int    `toml:"min_idle"`
+	PoolSize       int    `toml:"pool_size"`
+	ConnectTimeout int    `toml:"connect_timeout"` //second default not set
+	ReadTimeout    int    `toml:"read_timeout"`    //second default not set
+	WriteTimeout   int    `toml:"write_timeout"`   //second default not set
 }
 
 type redisClusterConfig struct {
-	Addrs    []string `toml:"addrs"`
-	Pass     string   `toml:"pass"`
-	MinIdle  int      `toml:"min_idle"`
-	PoolSize int      `toml:"pool_size"`
+	Addrs          []string `toml:"addrs"`
+	Pass           string   `toml:"pass"`
+	MinIdle        int      `toml:"min_idle"`
+	PoolSize       int      `toml:"pool_size"`
+	ConnectTimeout int      `toml:"connect_timeout"` //second default not set
+	ReadTimeout    int      `toml:"read_timeout"`    //second default not set
+	WriteTimeout   int      `toml:"write_timeout"`   //second default not set
 }
 
 type kafkaConfig struct {
@@ -72,12 +80,6 @@ type kafkaConsumerConfig struct {
 type kafkaProducerConfig struct {
 	Broker string `toml:"broker"`
 	Topic  string `toml:"topic"`
-}
-
-type extConfig struct {
-	TokenSecret     string `toml:"token_secret"`
-	WxMiniAppId     string `toml:"wx_mini_app_id"`
-	WxMiniAppSecret string `toml:"wx_mini_app_secret"`
 }
 
 type mongoConfig struct {

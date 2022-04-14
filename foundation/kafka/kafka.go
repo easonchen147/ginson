@@ -2,8 +2,7 @@ package kafka
 
 import (
 	"errors"
-	"ginson/cfg"
-
+	"ginson/foundation/cfg"
 	"github.com/segmentio/kafka-go"
 )
 

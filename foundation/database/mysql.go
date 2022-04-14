@@ -3,8 +3,8 @@ package database
 import (
 	"errors"
 	"fmt"
-	"ginson/cfg"
-	"ginson/pkg/log"
+	"ginson/foundation/cfg"
+	"ginson/foundation/log"
 	"gorm.io/gorm/schema"
 	"moul.io/zapgorm2"
 	"time"
@@ -34,7 +34,7 @@ func DB(dbName ...string) *gorm.DB {
 func InitDB(cfg *cfg.AppConfig) error {
 	conns = make(map[string]*gorm.DB)
 	for dbKey, dbConfig := range cfg.DbsConfig {
-		conn, err := openConn(dbConfig.Uri, dbConfig.MaxIdleConn, dbConfig.MaxOpenConn)
+		conn, err := openConn(dbConfig.Uri, dbConfig.MaxIdleConn, dbConfig.MaxOpenConn, dbConfig.ConnectLifeTime, dbConfig.ConnectIdleTime)
 		if err != nil {
 			return fmt.Errorf("open connection failed, error: %s", err.Error())
 		}
@@ -46,7 +46,7 @@ func InitDB(cfg *cfg.AppConfig) error {
 	return nil
 }
 
-func openConn(url string, idle, open int) (*gorm.DB, error) {
+func openConn(url string, idle, open, lifeTime, idleTime int) (*gorm.DB, error) {
 	newLogger := zapgorm2.New(log.SqlLogger)
 	newLogger.SetAsDefault()
 	openDB, err := gorm.Open(mysql.New(mysql.Config{DSN: url}), &gorm.Config{
@@ -66,5 +66,11 @@ func openConn(url string, idle, open int) (*gorm.DB, error) {
 	}
 	db.SetMaxIdleConns(idle)
 	db.SetMaxOpenConns(open)
+	if lifeTime > 0 {
+		db.SetConnMaxLifetime(time.Second * time.Duration(lifeTime))
+	}
+	if idleTime > 0 {
+		db.SetConnMaxIdleTime(time.Second * time.Duration(idleTime))
+	}
 	return openDB, nil
 }
