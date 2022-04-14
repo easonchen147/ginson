@@ -5,16 +5,16 @@ import (
 	"ginson/biz/user"
 	"ginson/foundation/log"
 	"ginson/pkg/conf"
-	"ginson/pkg/oauth"
+	"github.com/easonchen147/thirdpartyoauth"
 )
 
 type Service struct {
-	wxMiniOauthHandler *oauth.WxMiniOauthHandler
+	wxMiniOauthHandler *thirdpartyoauth.WxMiniOauthHandler
 	userService        *user.Service
 }
 
 func NewService() *Service {
-	return &Service{wxMiniOauthHandler: oauth.NewWxMiniOauthHandler(conf.ExtConf().WxMiniAppId, conf.ExtConf().WxMiniAppSecret), userService: user.NewService()}
+	return &Service{wxMiniOauthHandler: thirdpartyoauth.NewWxMiniOauthHandler(conf.ExtConf().WxMiniAppId, conf.ExtConf().WxMiniAppSecret), userService: user.NewService()}
 }
 
 func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenResp, error) {
@@ -24,7 +24,7 @@ func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenRe
 		return nil, err
 	}
 
-	var userInfo *oauth.WxMiniOauthUserInfo
+	var userInfo *thirdpartyoauth.WxMiniOauthUserInfo
 	if req.EncryptedData != "" && req.Iv != "" {
 		userInfo, err = w.wxMiniOauthHandler.GetUserInfo(sessionInfo.SessionKey, req.EncryptedData, req.Iv)
 		if err != nil {
@@ -43,7 +43,7 @@ func (w *Service) WxMiniLogin(ctx context.Context, req *LoginReq) (*user.TokenRe
 
 	return w.userService.GetUserToken(ctx, &user.CreateTokenReq{
 		OpenId:   sessionInfo.Openid,
-		Source:   oauth.SourceWxMini,
+		Source:   thirdpartyoauth.SourceWxMini,
 		Nickname: nickName,
 		Avatar:   avatar,
 		Gender:   w.wxMiniOauthHandler.GetGenderByInt(gender),
