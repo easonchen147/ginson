@@ -2,7 +2,7 @@ package main
 
 import (
 	"ginson/api"
-	"ginson/foundation"
+	"github.com/easonchen147/foundation"
 )
 
 func main() {

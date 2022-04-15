@@ -2,7 +2,7 @@ package conf
 
 import (
 	"fmt"
-	"ginson/foundation/cfg"
+	"github.com/easonchen147/foundation/cfg"
 )
 
 type ExtConfig struct {

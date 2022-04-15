@@ -3,8 +3,8 @@ package user
 import (
 	"context"
 	"fmt"
-	"ginson/foundation/cache"
 	"ginson/pkg/util"
+	"github.com/easonchen147/foundation/cache"
 	"time"
 
 	"github.com/go-redis/redis/v8"

@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"context"
-	"ginson/foundation/log"
 	"ginson/pkg/code"
 	"ginson/pkg/conf"
 	"ginson/pkg/resp"
+	"github.com/easonchen147/foundation/log"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"

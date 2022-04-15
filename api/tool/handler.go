@@ -2,7 +2,7 @@ package tool
 
 import (
 	"ginson/pkg/resp"
-	"ginson/foundation/log"
+	"github.com/easonchen147/foundation/log"
 	"image/color"
 	"net/url"
 

@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"ginson/foundation/database"
+	"github.com/easonchen147/foundation/database"
 
 	"gorm.io/gorm"
 )
