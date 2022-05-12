@@ -1,10 +1,10 @@
 package main
 
 import (
-	"ginson/api"
+	"ginson/handler"
 	"github.com/easonchen147/foundation"
 )
 
 func main() {
-	foundation.StartServer(api.RegisterRoutes)
+	foundation.StartServer(handler.RegisterRoutes)
 }

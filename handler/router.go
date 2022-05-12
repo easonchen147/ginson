@@ -1,9 +1,9 @@
-package api
+package handler
 
 import (
-	"ginson/api/tool"
-	"ginson/api/user"
-	"ginson/api/wxmini"
+	"ginson/handler/tool"
+	"ginson/handler/user"
+	"ginson/handler/wxmini"
 	"ginson/pkg/resp"
 
 	"github.com/gin-gonic/gin"
