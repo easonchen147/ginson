@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 	"errors"
-	"ginson/biz/user"
+	"ginson/service/user"
 	"ginson/pkg/resp"
 
 	"github.com/gin-gonic/gin"

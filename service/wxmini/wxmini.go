@@ -2,7 +2,7 @@ package wxmini
 
 import (
 	"context"
-	"ginson/biz/user"
+	"ginson/service/user"
 	"ginson/pkg/conf"
 	"github.com/easonchen147/foundation/log"
 	"github.com/easonchen147/thirdpartyoauth"

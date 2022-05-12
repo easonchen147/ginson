@@ -1,8 +1,8 @@
 package wxmini
 
 import (
-	"ginson/biz/user"
-	"ginson/biz/wxmini"
+	"ginson/service/user"
+	"ginson/service/wxmini"
 	"ginson/pkg/resp"
 
 	"github.com/gin-gonic/gin"
