@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 func SetJsonCache(ctx context.Context, client *redis.Client, key string, obj any, ttl time.Duration) error {

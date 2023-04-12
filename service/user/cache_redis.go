@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 	"fmt"
-	"ginson/pkg/util"
-	"github.com/easonchen147/foundation/cache"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"ginson/pkg/util"
+	"github.com/easonchen147/foundation/cache"
+	"github.com/redis/go-redis/v9"
 )
 
 type CacheRedis struct {

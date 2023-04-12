@@ -12,8 +12,8 @@ import (
 
 	"github.com/easonchen147/foundation/log"
 	"github.com/easonchen147/foundation/util"
-	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 

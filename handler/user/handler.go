@@ -3,8 +3,8 @@ package user
 import (
 	"context"
 	"errors"
-	"ginson/service/user"
 	"ginson/pkg/resp"
+	"ginson/service/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,7 +43,7 @@ func (u *handler) GetUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	var result *user.User
+	var result *user.UserVO
 	result, err = u.service.GetUserInfo(ctx, userId)
 	if err != nil {
 		u.FailedWithErr(ctx, err)
@@ -60,7 +60,7 @@ func (u *handler) UpdateUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	var updateUserInfo *user.User
+	var updateUserInfo *user.UserVO
 	err = ctx.ShouldBindJSON(&updateUserInfo)
 	if err != nil {
 		u.FailedWithBindErr(ctx, err)
