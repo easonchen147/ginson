@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/chromedp/chromedp v0.7.8
-	github.com/easonchen147/foundation v0.5.0
+	github.com/easonchen147/foundation v0.5.1
 	github.com/easonchen147/thirdpartyoauth v0.1.1
 	github.com/gin-gonic/gin v1.9.0
 	github.com/golang-jwt/jwt/v4 v4.4.1

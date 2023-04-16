@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"github.com/easonchen147/foundation/database"
+	"github.com/easonchen147/foundation/db"
 
 	"gorm.io/gorm"
 )
@@ -12,7 +12,7 @@ type RepositoryDb struct {
 }
 
 func NewRepositoryDb() *RepositoryDb {
-	return &RepositoryDb{db: database.DB()}
+	return &RepositoryDb{db: db.DB()}
 }
 
 func (r *RepositoryDb) CreateUser(ctx context.Context, user *User) error {
