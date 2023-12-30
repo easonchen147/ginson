@@ -1,26 +1,27 @@
-package user
+package db
 
 import (
 	"context"
+	"ginson/model"
 	"github.com/easonchen147/foundation/db"
 
 	"gorm.io/gorm"
 )
 
-type RepositoryDb struct {
+type Db struct {
 	db *gorm.DB
 }
 
-func NewRepositoryDb() *RepositoryDb {
-	return &RepositoryDb{db: db.DB()}
+func NewDb() *Db {
+	return &Db{db: db.DB()}
 }
 
-func (r *RepositoryDb) CreateUser(ctx context.Context, user *User) error {
+func (r *Db) CreateUser(ctx context.Context, user *model.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r *RepositoryDb) GetUserById(ctx context.Context, userId uint) (*User, error) {
-	var result User
+func (r *Db) GetUserById(ctx context.Context, userId uint) (*model.User, error) {
+	var result model.User
 	err := r.db.First(&result, userId).Error
 	if err != nil {
 		return nil, err
@@ -28,8 +29,8 @@ func (r *RepositoryDb) GetUserById(ctx context.Context, userId uint) (*User, err
 	return &result, nil
 }
 
-func (r *RepositoryDb) FindByOpenIdAndSource(ctx context.Context, openId, source string) (*User, error) {
-	var result User
+func (r *Db) FindByOpenIdAndSource(ctx context.Context, openId, source string) (*model.User, error) {
+	var result model.User
 	err := r.db.Where("open_id = ? and source = ? ", openId, source).First(&result).Error
 	if err != nil {
 		return nil, err
@@ -37,7 +38,7 @@ func (r *RepositoryDb) FindByOpenIdAndSource(ctx context.Context, openId, source
 	return &result, nil
 }
 
-func (r *RepositoryDb) UpdateUserById(ctx context.Context, user *User) error {
+func (r *Db) UpdateUserById(ctx context.Context, user *model.User) error {
 	return r.db.Model(user).Updates(map[string]interface{}{
 		"nickname": user.Nickname,
 		"avatar":   user.Avatar,
