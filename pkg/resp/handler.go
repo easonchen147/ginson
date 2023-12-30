@@ -1,6 +1,7 @@
 package resp
 
 import (
+	"errors"
 	"ginson/pkg/code"
 	"net/http"
 
@@ -42,7 +43,8 @@ func (*Handler) FailedWithCodeMsg(ctx *gin.Context, code int, msg string) {
 }
 
 func (*Handler) FailedWithErr(ctx *gin.Context, err error) {
-	if bizErr, ok := err.(code.BizErr); ok {
+	var bizErr code.BizErr
+	if errors.As(err, &bizErr) {
 		ctx.AbortWithStatusJSON(http.StatusOK, NewResponseFailedBizErr(bizErr))
 		return
 	}
