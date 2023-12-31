@@ -1,7 +1,7 @@
 package api
 
 type UserVO struct {
-	UserId   uint   `json:"userId"`
+	UserId   uint   `json:"userId" copier:"ID"`
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
 	Age      int    `json:"age"`

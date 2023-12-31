@@ -8,6 +8,7 @@ import (
 	"ginson/model"
 	"ginson/repo/user/cache"
 	"ginson/repo/user/db"
+	"github.com/jinzhu/copier"
 	"math/rand"
 	"time"
 
@@ -51,15 +52,16 @@ func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*api.UserVO, er
 }
 
 func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *api.UserVO) error {
-	err := u.db.UpdateUserById(ctx, &model.User{
+	user := &model.User{
 		Model: gorm.Model{
 			ID: userInfo.UserId,
 		},
-		Nickname: userInfo.Nickname,
-		Avatar:   userInfo.Avatar,
-		Age:      userInfo.Age,
-		Gender:   userInfo.Gender,
-	})
+	}
+	err := copier.Copy(&user, userInfo)
+	if err != nil {
+		return err
+	}
+	err = u.db.UpdateUserById(ctx, user)
 	if err != nil {
 		return err
 	}
@@ -75,12 +77,10 @@ func (u *Service) queryUserInfoFromDb(ctx context.Context, userId uint) (*api.Us
 		return nil, err
 	}
 
-	result := &api.UserVO{
-		UserId:   user.ID,
-		Nickname: user.Nickname,
-		Avatar:   user.Avatar,
-		Age:      user.Age,
-		Gender:   user.Gender,
+	var result *api.UserVO
+	err = copier.Copy(&result, user)
+	if err != nil {
+		return nil, err
 	}
 	return result, nil
 }
@@ -133,15 +133,12 @@ func (u *Service) randomNickName(ctx context.Context) string {
 }
 
 func (u *Service) createUser(ctx context.Context, req *api.CreateTokenReq) (*model.User, error) {
-	user := &model.User{
-		OpenId:   req.OpenId,
-		Source:   req.Source,
-		Nickname: req.Nickname,
-		Avatar:   req.Avatar,
-		Age:      req.Age,
-		Gender:   req.Gender,
+	var user *model.User
+	err := copier.Copy(&user, req)
+	if err != nil {
+		return nil, err
 	}
-	err := u.db.CreateUser(ctx, user)
+	err = u.db.CreateUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}

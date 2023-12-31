@@ -10,21 +10,13 @@ sql_log_file = "logs/sql.log"
 [dbs]
 
 [dbs.default]
-uri = "dbuser:Dbuser123456.@tcp(172.17.0.1:3306)/ginson?charset=utf8mb4&parseTime=True&loc=Local"
+uri = "root:root123456.@tcp(127.0.0.1:3306)/ginson?charset=utf8mb4&parseTime=True&loc=Local"
 max_idle_conn = 5
 max_open_conn = 50
 
-[mongo]
-uri = "mongodb://dbuser:Dbuser123456.@172.17.0.1:27017/?connect=direct&authSource=admin"
-db = "test"
-connect_timeout = 5
-max_open_conn = 64
-max_pool_size = 64
-min_pool_size = 12
-
 [redis]
-addr = "172.17.0.1:6379"
-pass = "rdsuser123456"
+addr = "127.0.0.1:6379"
+pass = ""
 db = 1
 min_idle = 10
 pool_size = 64
