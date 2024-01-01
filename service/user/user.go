@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"ginson/api"
-	"ginson/model"
-	"ginson/repo/user/cache"
-	"ginson/repo/user/db"
+	"ginson/models/api"
+	"ginson/models/entity"
+	"ginson/repo"
+	"ginson/repo/cache"
+	"ginson/repo/db"
 	"github.com/jinzhu/copier"
 	"math/rand"
 	"time"
@@ -23,12 +24,12 @@ import (
 )
 
 type Service struct {
-	db    db.Repodb
-	cache cache.RepoCache
+	db    repo.UserDb
+	cache repo.UserCache
 }
 
 func NewService() *Service {
-	return &Service{db: db.NewDb(), cache: cache.NewRds()}
+	return &Service{db: db.NewUserDb(), cache: cache.NewUserCache()}
 }
 
 func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*api.UserVO, error) {
@@ -52,7 +53,7 @@ func (u *Service) GetUserInfo(ctx context.Context, userId uint) (*api.UserVO, er
 }
 
 func (u *Service) UpdateUserInfo(ctx context.Context, userInfo *api.UserVO) error {
-	user := &model.User{
+	user := &entity.User{
 		Model: gorm.Model{
 			ID: userInfo.UserId,
 		},
@@ -90,7 +91,7 @@ func (u *Service) GetUserToken(ctx context.Context, req *api.CreateTokenReq) (*a
 		return nil, code.OpenIdInvalidError
 	}
 
-	var user *model.User
+	var user *entity.User
 	user, err := u.db.FindByOpenIdAndSource(ctx, req.OpenId, req.Source)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Error(ctx, "find by openId and source failed. error: %v", err)
@@ -132,8 +133,8 @@ func (u *Service) randomNickName(ctx context.Context) string {
 	return fmt.Sprintf("用户%06d", rand.Intn(1000000))
 }
 
-func (u *Service) createUser(ctx context.Context, req *api.CreateTokenReq) (*model.User, error) {
-	var user *model.User
+func (u *Service) createUser(ctx context.Context, req *api.CreateTokenReq) (*entity.User, error) {
+	var user *entity.User
 	err := copier.Copy(&user, req)
 	if err != nil {
 		return nil, err

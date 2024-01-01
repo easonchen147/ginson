@@ -3,7 +3,8 @@ package user
 import (
 	"context"
 	"errors"
-	"ginson/api"
+	"ginson/models/api"
+	"ginson/pkg/middleware"
 	"ginson/pkg/resp"
 	"ginson/service/user"
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,12 @@ func newHandler() *handler {
 		Handler: resp.NewHandler(),
 		service: user.NewService(),
 	}
+}
+
+func RegisterUserRouters(group *gin.RouterGroup) {
+	userHandler := newHandler()
+	group.Use(middleware.TokenMiddleware())
+	group.POST("/get-user-info", userHandler.GetUserInfo)
 }
 
 func (u *handler) GetUserIdFromCtx(ctx context.Context) (uint, error) {

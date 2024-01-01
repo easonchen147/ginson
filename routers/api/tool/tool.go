@@ -22,6 +22,12 @@ func newHandler() *handler {
 	}
 }
 
+func RegisterToolRouters(group *gin.RouterGroup) {
+	handler := newHandler()
+	group.GET("/get-qr-code", handler.GetQrCode)
+	group.GET("/get-screenshot", handler.GetScreenShot)
+}
+
 func (c *handler) GetQrCode(ctx *gin.Context) {
 	data := ctx.Query("data")
 

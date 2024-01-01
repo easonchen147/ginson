@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 	"fmt"
-	"ginson/api"
+	"ginson/models/api"
 	"time"
 
 	"github.com/easonchen147/foundation/cache"
@@ -12,22 +12,22 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type Rds struct {
+type UserCache struct {
 	client *redis.Client
 }
 
-func NewRds() *Rds {
-	return &Rds{client: cache.Redis()}
+func NewUserCache() *UserCache {
+	return &UserCache{client: cache.Redis()}
 }
 
-func (c *Rds) getUserIdKey(userId uint) string {
+func (c *UserCache) getUserIdKey(userId uint) string {
 	return fmt.Sprintf("userId:%d", userId)
 }
 
-func (c *Rds) SetUser(ctx context.Context, user *api.UserVO) error {
+func (c *UserCache) SetUser(ctx context.Context, user *api.UserVO) error {
 	return util.SetJsonCache(ctx, c.client, c.getUserIdKey(user.UserId), user, time.Hour)
 }
 
-func (c *Rds) GetUser(ctx context.Context, userId uint) (*api.UserVO, error) {
+func (c *UserCache) GetUser(ctx context.Context, userId uint) (*api.UserVO, error) {
 	return util.GetByJsonCache[api.UserVO](ctx, c.client, c.getUserIdKey(userId))
 }

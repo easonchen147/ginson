@@ -1,4 +1,4 @@
-package wxmini
+package api
 
 type LoginReq struct {
 	Code          string `json:"code" binding:"required"`
