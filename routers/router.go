@@ -2,9 +2,9 @@ package routers
 
 import (
 	"ginson/pkg/resp"
-	"ginson/router/handler/tool"
-	"ginson/router/handler/user"
-	"ginson/router/handler/wxmini"
+	"ginson/routers/handler/tool"
+	"ginson/routers/handler/user"
+	"ginson/routers/handler/wxmini"
 	"github.com/gin-gonic/gin"
 )
 

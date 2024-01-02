@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ginson/router"
+	"ginson/routers"
 	"github.com/easonchen147/foundation"
 	"github.com/easonchen147/foundation/util"
 )
