@@ -1,9 +1,9 @@
-package cache
+package userrepo
 
 import (
 	"context"
 	"fmt"
-	"ginson/models/api"
+	"ginson/api"
 	"time"
 
 	"github.com/easonchen147/foundation/cache"

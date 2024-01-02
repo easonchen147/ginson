@@ -2,7 +2,7 @@ package wxmini
 
 import (
 	"context"
-	"ginson/models/api"
+	api2 "ginson/api"
 	"ginson/pkg/conf"
 	"ginson/service/user"
 	"github.com/easonchen147/foundation/log"
@@ -18,7 +18,7 @@ func NewService() *Service {
 	return &Service{wxMiniOauthHandler: thirdpartyoauth.NewWxMiniOauthHandler(conf.ExtConf().WxMiniAppId, conf.ExtConf().WxMiniAppSecret), userService: user.NewService()}
 }
 
-func (w *Service) WxMiniLogin(ctx context.Context, req *api.LoginReq) (*api.TokenResp, error) {
+func (w *Service) WxMiniLogin(ctx context.Context, req *api2.LoginReq) (*api2.TokenResp, error) {
 	sessionInfo, err := w.wxMiniOauthHandler.CodeToSessionKey(ctx, req.Code)
 	if err != nil {
 		log.Error(ctx, "code to session key failed, error: %v", err)
@@ -42,7 +42,7 @@ func (w *Service) WxMiniLogin(ctx context.Context, req *api.LoginReq) (*api.Toke
 		gender = userInfo.Gender
 	}
 
-	return w.userService.GetUserToken(ctx, &api.CreateTokenReq{
+	return w.userService.GetUserToken(ctx, &api2.CreateTokenReq{
 		OpenId:   sessionInfo.Openid,
 		Source:   thirdpartyoauth.SourceWxMini,
 		Nickname: nickName,

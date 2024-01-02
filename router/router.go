@@ -2,16 +2,16 @@ package routers
 
 import (
 	"ginson/pkg/resp"
-	"ginson/routers/api/tool"
-	"ginson/routers/api/user"
-	"ginson/routers/api/wxmini"
+	"ginson/router/handler/tool"
+	"ginson/router/handler/user"
+	"ginson/router/handler/wxmini"
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterRoutes(server *gin.Engine) {
 	server.GET("/", resp.NewHandler().Index)
 
-	r := server.Group("/api")
+	r := server.Group("/handler")
 	{
 		user.RegisterUserRouters(r.Group("/user"))
 		wxmini.RegisterWxMiniRouters(r.Group("/wx-mini"))

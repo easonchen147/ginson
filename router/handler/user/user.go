@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 	"errors"
-	"ginson/models/api"
+	"ginson/api"
 	"ginson/pkg/middleware"
 	"ginson/pkg/resp"
 	"ginson/service/user"

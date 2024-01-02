@@ -1,7 +1,7 @@
 package wxmini
 
 import (
-	"ginson/models/api"
+	api2 "ginson/api"
 	"ginson/pkg/resp"
 	"ginson/service/wxmini"
 	"github.com/gin-gonic/gin"
@@ -26,14 +26,14 @@ func RegisterWxMiniRouters(group *gin.RouterGroup) {
 }
 
 func (c *handler) WxMiniLogin(ctx *gin.Context) {
-	var req *api.LoginReq
+	var req *api2.LoginReq
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
 		c.FailedWithBindErr(ctx, err)
 		return
 	}
 
-	var result *api.TokenResp
+	var result *api2.TokenResp
 	result, err = c.service.WxMiniLogin(ctx, req)
 	if err != nil {
 		c.FailedWithErr(ctx, err)
