@@ -99,8 +99,11 @@ func (c *handler) imageFaceLocation(ctx *gin.Context) {
 		return
 	}
 
+	//TODO scan image for sensitive
+
 	var result map[string]interface{}
 	result, err = c.service.FaceLocation(ctx, filePath)
+	defer os.Remove(filePath) // 图片识别完毕后，删除对应文件
 	if err != nil {
 		c.FailedWithErr(ctx, err)
 		return
