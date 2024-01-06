@@ -25,19 +25,19 @@ func RegisterWxMiniRouters(group *gin.RouterGroup) {
 	group.POST("/login", wxMini.WxMiniLogin)
 }
 
-func (c *handler) WxMiniLogin(ctx *gin.Context) {
+func (h *handler) WxMiniLogin(ctx *gin.Context) {
 	var req *api2.LoginReq
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		c.FailedWithBindErr(ctx, err)
+		h.FailedWithBindErr(ctx, err)
 		return
 	}
 
 	var result *api2.TokenResp
-	result, err = c.service.WxMiniLogin(ctx, req)
+	result, err = h.service.WxMiniLogin(ctx, req)
 	if err != nil {
-		c.FailedWithErr(ctx, err)
+		h.FailedWithErr(ctx, err)
 		return
 	}
-	c.SuccessData(ctx, result)
+	h.SuccessData(ctx, result)
 }

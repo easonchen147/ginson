@@ -9,6 +9,8 @@ type ExtConfig struct {
 	TokenSecret     string `mapstructure:"token_secret"`
 	WxMiniAppId     string `mapstructure:"wx_mini_app_id"`
 	WxMiniAppSecret string `mapstructure:"wx_mini_app_secret"`
+
+	UploadImagePath string `mapstructure:"upload_image_path"`
 }
 
 var extConfig = &ExtConfig{}

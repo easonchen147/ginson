@@ -29,7 +29,7 @@ func RegisterUserRouters(group *gin.RouterGroup) {
 	group.POST("/get-user-info", userHandler.GetUserInfo)
 }
 
-func (u *handler) GetUserIdFromCtx(ctx context.Context) (uint, error) {
+func (h *handler) GetUserIdFromCtx(ctx context.Context) (uint, error) {
 	userId := ctx.Value("userId")
 	if userId == nil {
 		return 0, errors.New("userId is nil")
@@ -43,43 +43,43 @@ func (u *handler) GetUserIdFromCtx(ctx context.Context) (uint, error) {
 	return userIdInt, nil
 }
 
-func (u *handler) GetUserInfo(ctx *gin.Context) {
-	userId, err := u.GetUserIdFromCtx(ctx)
+func (h *handler) GetUserInfo(ctx *gin.Context) {
+	userId, err := h.GetUserIdFromCtx(ctx)
 	if err != nil {
-		u.FailedWithBindErr(ctx, err)
+		h.FailedWithBindErr(ctx, err)
 		return
 	}
 
 	var result *api.UserVO
-	result, err = u.service.GetUserInfo(ctx, userId)
+	result, err = h.service.GetUserInfo(ctx, userId)
 	if err != nil {
-		u.FailedWithErr(ctx, err)
+		h.FailedWithErr(ctx, err)
 		return
 	}
 
-	u.SuccessData(ctx, result)
+	h.SuccessData(ctx, result)
 }
 
-func (u *handler) UpdateUserInfo(ctx *gin.Context) {
-	userId, err := u.GetUserIdFromCtx(ctx)
+func (h *handler) UpdateUserInfo(ctx *gin.Context) {
+	userId, err := h.GetUserIdFromCtx(ctx)
 	if err != nil {
-		u.FailedWithErr(ctx, err)
+		h.FailedWithErr(ctx, err)
 		return
 	}
 
 	var updateUserInfo *api.UserVO
 	err = ctx.ShouldBindJSON(&updateUserInfo)
 	if err != nil {
-		u.FailedWithBindErr(ctx, err)
+		h.FailedWithBindErr(ctx, err)
 		return
 	}
 	updateUserInfo.UserId = userId
 
-	err = u.service.UpdateUserInfo(ctx, updateUserInfo)
+	err = h.service.UpdateUserInfo(ctx, updateUserInfo)
 	if err != nil {
-		u.FailedWithErr(ctx, err)
+		h.FailedWithErr(ctx, err)
 		return
 	}
 
-	u.Success(ctx)
+	h.Success(ctx)
 }

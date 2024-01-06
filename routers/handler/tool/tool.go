@@ -1,10 +1,18 @@
 package tool
 
 import (
+	"fmt"
+	"ginson/pkg/conf"
 	"ginson/pkg/resp"
+	"ginson/service/tool"
 	"github.com/easonchen147/foundation/log"
+	"github.com/easonchen147/foundation/util"
 	"image/color"
+	"io"
 	"net/url"
+	"os"
+	"path/filepath"
+	"time"
 
 	"github.com/chromedp/chromedp"
 	"github.com/chromedp/chromedp/device"
@@ -14,11 +22,13 @@ import (
 
 type handler struct {
 	*resp.Handler
+	service *tool.Service
 }
 
 func newHandler() *handler {
 	return &handler{
 		Handler: resp.NewHandler(),
+		service: tool.NewService(),
 	}
 }
 
@@ -80,4 +90,45 @@ func (c *handler) fullScreenshot(url string, quality int, res *[]byte) chromedp.
 		//chromedp.EvaluateAsDevTools(`p = document.querySelector("#hotsearch-refresh-btn > span");p.innerText="我调整了标题";`, nil),
 		chromedp.FullScreenshot(res, quality),
 	}
+}
+
+func (c *handler) imageFaceLocation(ctx *gin.Context) {
+	filePath, err := c.saveUploadImageFile(ctx)
+	if err != nil {
+		c.FailedWithErr(ctx, err)
+		return
+	}
+
+	var result map[string]interface{}
+	result, err = c.service.FaceLocation(ctx, filePath)
+	if err != nil {
+		c.FailedWithErr(ctx, err)
+		return
+	}
+
+	c.SuccessData(ctx, result)
+}
+
+func (c *handler) saveUploadImageFile(ctx *gin.Context) (string, error) {
+	file, header, err := ctx.Request.FormFile("image")
+	if err != nil {
+		return "", err
+	}
+
+	filePath := conf.ExtConf().UploadImagePath + string(os.PathSeparator) + util.GetNanoId() + string(os.PathSeparator) + fmt.Sprintf("%v", time.Now().Unix()) + filepath.Ext(header.Filename)
+	log.Info(ctx, "image face location, by file path: %v", filePath)
+
+	out, err := os.Create(filePath)
+	if err != nil {
+		log.Error(ctx, "create file failed, error: %v", err)
+		return "", err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, file)
+	if err != nil {
+		log.Error(ctx, "copy file failed, error: %v", err)
+		return "", err
+	}
+	return filePath, err
 }
