@@ -24,4 +24,5 @@ pool_size = 64
 # 业务配置在这里
 [ext]
 token_secret = "@fc695ewewqewqwqdaaaaa"
+upload_image_path = "C:\\Users\\Administrator\\Desktop\\share\\images"
 

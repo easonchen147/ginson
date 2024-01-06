@@ -36,6 +36,7 @@ func RegisterToolRouters(group *gin.RouterGroup) {
 	handler := newHandler()
 	group.GET("/get-qr-code", handler.GetQrCode)
 	group.GET("/get-screenshot", handler.GetScreenShot)
+	group.POST("/face-location", handler.ImageFaceLocation)
 }
 
 func (c *handler) GetQrCode(ctx *gin.Context) {
@@ -92,7 +93,7 @@ func (c *handler) fullScreenshot(url string, quality int, res *[]byte) chromedp.
 	}
 }
 
-func (c *handler) imageFaceLocation(ctx *gin.Context) {
+func (c *handler) ImageFaceLocation(ctx *gin.Context) {
 	filePath, err := c.saveUploadImageFile(ctx)
 	if err != nil {
 		c.FailedWithErr(ctx, err)
@@ -118,7 +119,7 @@ func (c *handler) saveUploadImageFile(ctx *gin.Context) (string, error) {
 		return "", err
 	}
 
-	filePath := conf.ExtConf().UploadImagePath + string(os.PathSeparator) + util.GetNanoId() + string(os.PathSeparator) + fmt.Sprintf("%v", time.Now().Unix()) + filepath.Ext(header.Filename)
+	filePath := conf.ExtConf().UploadImagePath + string(os.PathSeparator) + util.GetNanoId() + "-" + fmt.Sprintf("%v", time.Now().Unix()) + filepath.Ext(header.Filename)
 	log.Info(ctx, "image face location, by file path: %v", filePath)
 
 	out, err := os.Create(filePath)

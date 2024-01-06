@@ -11,7 +11,7 @@ import (
 func RegisterRoutes(server *gin.Engine) {
 	server.GET("/", resp.NewHandler().Index)
 
-	r := server.Group("/handler")
+	r := server.Group("/api")
 	{
 		user.RegisterUserRouters(r.Group("/user"))
 		wxmini.RegisterWxMiniRouters(r.Group("/wx-mini"))
